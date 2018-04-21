@@ -1,0 +1,36 @@
+<html>
+<head>
+<title>
+Mining Shed Temp Entries
+</title>
+</head>
+<body bgcolor="#000000">
+<p>
+<style> table {	border-collapse: collapse;} table, th, td {border: 1px solid #606060; padding-left: 10px; padding-right: 10px </style>
+
+<div>
+ <h1><FONT COLOR="#FFFFFF">Mining Shed Temp Entries</FONT></h1>
+</div>
+<a href="..">Back</a>
+<table>
+ <tr>
+  <th bgcolor="#A0A0A0">Date/Time</th>
+  <th bgcolor="#A0A0A0">Shed</th>
+  <th bgcolor="#A0A0A0">Outside</th>
+  <th bgcolor="#A0A0A0">GPU Avg.</th>
+  <th bgcolor="#A0A0A0">GPU High</th>
+ </tr>
+  
+{% for entry in entries %}
+ <tr>
+  <td> <FONT COLOR="#A0A0A0">{{ entry.time }}</FONT></td>
+  <td> <FONT COLOR="#A0A0A0">{{ entry.shedcur }}</FONT></td>
+  <td> <FONT COLOR="#A0A0A0">{{ entry.outscur }}</FONT></td>
+  <td> <FONT COLOR="#A0A0A0">{{ entry.gpuavg }}</FONT></td>
+  <td> <FONT COLOR="#A0A0A0">{{ entry.gpuhigh }}</FONT></td>
+ </tr>
+{% endfor %}
+
+</table>
+
+</html>

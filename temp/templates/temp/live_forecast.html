@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>
+Mining Shed Monitor - Live Forecast
+</title>
+<meta http-equiv="refresh" content="1800">
+</head>
+<body bgcolor="#000000">
+
+<style> table {	border-collapse: collapse;} table, th, td {border: 1px solid #606060; padding-left: 10px; padding-right: 10px </style>
+
+<table style="height:75px;width:240px">
+<tr>
+<th colspan=1 align="center" nowrap><FONT COLOR="#A0A0A0">Forecast</FONT></th>
+<th colspan=2 align="center" nowrap><FONT COLOR="#A0A0A0" align="center">{{ forecast_date }}</FONT></th> 
+</tr>
+<tr>
+<td align="center" rowspan=0><FONT COLOR="#A0A0A0"><img src="https://openweathermap.org/img/w/{{ forecast_icon }}.png" alt="{{ forecast_alt }}" title="{{ forecast_alt }}"></FONT></td>
+<td align="center"><FONT COLOR="#A0A0A0">7:00 AM</FONT></td>
+<td align="center"><FONT COLOR="#A0A0A0">5:00 PM</FONT></td>
+</tr>
+<tr> 
+<td align="center"><FONT COLOR="#A0A0A0">{{ forecast_am }}*</FONT></td>
+<td align="center"><FONT COLOR="#A0A0A0">{{ forecast_pm }}*</FONT></td>
+</tr>
+</table>
+
+</html>
