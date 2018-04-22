@@ -33,7 +33,7 @@ def forecast():
         if re_date == "18:00:00":                                                
                 x = 6                                                
                 y = 1                                                
-        if re_date == "22:00:00":                                                        
+        if re_date == "21:00:00":                                                        
                 x = 5                                                        
                 y = 8
         

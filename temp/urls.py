@@ -11,5 +11,7 @@ urlpatterns = [
 	url(r'live_readout', views.live_readout, name='live_readout'),
 	url(r'live_forecast', views.live_forecast, name='live_forecast'),
 	url(r'live_power', views.live_power, name='live_power'),
-	#url('^history_graph\/[0-9]{4}\/[0-9]{2}\/[0-9]{2}', views.history_graph, name='history_graph'),
+	#url(r'^history_graph.*', views.history_graph, name='history_graph'),
+	#url(r'^history_graph/[0-9]{4}\/[0-9]{2}\/[0-9]{2}$', views.history_graph, name='history_graph'),
+	url(r'^history_graph/(?P<date>[0-9]{4}\-[0-9]{2}\-[0-9]{2})$', views.history_graph, name='history_graph'),
 ]

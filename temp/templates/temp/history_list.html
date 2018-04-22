@@ -25,7 +25,7 @@ Mining Shed Temp History
   
 {% for history in historys %}
  <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ history.date }}</FONT></td>
+  <td> <FONT COLOR="#A0A0A0"><a href="{% url 'history_graph' date=history.date %}">{{ history.date }}</a></FONT></td>
   <td> <FONT COLOR="#A0A0A0">{{ history.highshed }}</FONT></td>
   <td> <FONT COLOR="#A0A0A0">{{ history.highouts }}</FONT></td>
   <td> <FONT COLOR="#A0A0A0">{{ history.avgshed }}</FONT></td>

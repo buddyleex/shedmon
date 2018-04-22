@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.db.models import Avg, Max
 from django.http import JsonResponse
@@ -10,6 +10,8 @@ from temps.livereadout import *
 from temps.forecast import *
 import time
 from datetime import timedelta
+from datetime import date
+from datetime import datetime
 
 # Create your views here.
 
@@ -33,23 +35,17 @@ def history_list(request):
 
 
 def update_history(request):
-	current_day = timezone.now()
-	previous_day = current_day - timedelta(hours=24)
-	date_entry = previous_day.date()
-
-	avg_choice = update_avg(date_entry,previous_day,current_day)
-	high_choice = update_high(date_entry,previous_day,current_day)
-
 	history = History(date=date_entry, avgshed=round(avg_choice['shedcur'],2),highshed=round(high_choice['shedcur'],2),avgouts=round(avg_choice['outscur'],2),highouts=round(high_choice['outscur'],2),avggpu=avg_choice['gpuavg'],highgpu=high_choice['gpuhigh'],starttime=previous_day,endtime=current_day)
 	history.save()
 
 
+def history_graph(request,date):
+	graph = get_object_or_404(History, date=date)
+	graph_display = Entry.objects.filter(time__gte=graph.starttime, time__lt=graph.endtime).order_by('-time')
+	return render(request, 'temp/history_graph.html', {'graph': graph, 'graph_display': graph_display})
+
+
 def update_entry(request):
-	w1_list = filter(settings.W1['FOLDER_REGEX'].search, settings.W1['LIST'])
-	gputemps()
-	gpu_choice = gputemps()
-	shed_temp()
-	outside_temp()
 	entry = Entry(shedcur=shed_temp(), outscur=outside_temp(),gpuavg=gpu_choice.gpuavg,gpuhigh=gpu_choice.gpuhigh)
 	entry.save()
 	
@@ -62,6 +58,6 @@ def live_power(request):
 	return render(request, 'temp/live_power.html', {})
 
 
-
 def three_day():
 	return timezone.now() - timezone.timedelta(days=3)
+
