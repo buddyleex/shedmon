@@ -2,9 +2,12 @@ import temp.views
 import django
 import requests
 import re
+import sys
+sys.path.append('/home/pi')
+from apicalls import pyowm_api, pyowm_city
 
-api_address='http://api.openweathermap.org/data/2.5/forecast?appid=2cc6c9fc14c80bb92a8d50c35eaca912&q='
-city = 'keller,us'
+api_address='http://api.openweathermap.org/data/2.5/forecast?appid=' + pyowm_api + '&q='
+city = pyowm_city
 url = api_address + city
 json_data = requests.get(url).json()
 

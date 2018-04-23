@@ -7,6 +7,9 @@ import re
 from temp.models import *
 import temp.views
 import django
+import sys
+sys.path.append('/home/pi')
+from apicalls import pyowm_api, pyowm_city
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -39,11 +42,10 @@ def live_shed():
 
 
 def live_outside():
-	owm = pyowm.OWM('2cc6c9fc14c80bb92a8d50c35eaca912')
-        observation = owm.weather_at_place('Keller,US')
+	owm = pyowm.OWM(pyowm_api)
+        observation = owm.weather_at_place(pyowm_city)
         w = observation.get_weather()
         s = w.get_temperature('fahrenheit')['temp']
 	return s
 
-#entry = Entry(shedcur=shed_temp(), outscur=outside_temp(),gpuavg=gpu_choice.gpuavg,gpuhigh=gpu_choice.gpuhigh)
-#entry.save()
+

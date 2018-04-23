@@ -12,6 +12,9 @@ from temp.models import *
 import temp.views
 import django
 from django.http import request
+import sys
+sys.path.append('/home/pi')
+from apicalls import pyowm_api, pyowm_city
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -44,8 +47,8 @@ def shed_temp():
 
 
 def outside_temp():
-	owm = pyowm.OWM('2cc6c9fc14c80bb92a8d50c35eaca912')
-        observation = owm.weather_at_place('Keller,US')
+	owm = pyowm.OWM(pyowm_api)
+        observation = owm.weather_at_place(pyowm_city)
         w = observation.get_weather()
         s = w.get_temperature('fahrenheit')['temp']
 	return s

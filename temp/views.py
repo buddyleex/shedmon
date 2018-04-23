@@ -8,6 +8,7 @@ from temps.temps import *
 from temps.history import *
 from temps.livereadout import *
 from temps.forecast import *
+from temps.mph import *
 import time
 from datetime import timedelta
 from datetime import date
@@ -56,6 +57,10 @@ def live_forecast(request):
 
 def live_power(request):
 	return render(request, 'temp/live_power.html', {})
+
+
+def live_mphpool(request):
+	return render(request, 'temp/live_mphpool.html', {'eth_balance' : mph_eth_confirmed_balance(), 'eth_nethash' : mph_eth_dashboard()[0], 'eth_last24hr' : mph_eth_dashboard()[1]})
 
 
 def three_day():
