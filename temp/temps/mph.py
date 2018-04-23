@@ -81,7 +81,13 @@ def mph_eth_dashboard():
         return hash(nethash), last24hr
 
 
+def eth_price():
+        r = requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/').json()
+        ethprice = round(float(r[0]['price_usd']),2)
+        ethprice = "$" + str(ethprice)
+        return ethprice
+
 #print mph_eth_confirmed_balance()
 #print mph_eth_dashboard()[0]
 #print mph_eth_dashboard()[1]
-
+#print eth_price()

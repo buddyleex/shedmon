@@ -60,7 +60,7 @@ def live_power(request):
 
 
 def live_mphpool(request):
-	return render(request, 'temp/live_mphpool.html', {'eth_balance' : mph_eth_confirmed_balance(), 'eth_nethash' : mph_eth_dashboard()[0], 'eth_last24hr' : mph_eth_dashboard()[1]})
+	return render(request, 'temp/live_mphpool.html', {'eth_balance' : mph_eth_confirmed_balance(), 'eth_nethash' : mph_eth_dashboard()[0], 'eth_last24hr' : mph_eth_dashboard()[1], 'eth_price' : eth_price()})
 
 
 def three_day():
