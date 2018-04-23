@@ -1,7 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, render_to_response
 from django.utils import timezone
 from django.db.models import Avg, Max
 from django.http import JsonResponse
+from chartit import DataPool, Chart
 from temp.models import *
 from temp import settings
 from temps.temps import *
@@ -9,6 +10,7 @@ from temps.history import *
 from temps.livereadout import *
 from temps.forecast import *
 from temps.mph import *
+
 import time
 from datetime import timedelta
 from datetime import date
@@ -42,8 +44,41 @@ def update_history(request):
 
 def history_graph(request,date):
 	graph = get_object_or_404(History, date=date)
-	graph_display = Entry.objects.filter(time__gte=graph.starttime, time__lt=graph.endtime).order_by('-time')
-	return render(request, 'temp/history_graph.html', {'graph': graph, 'graph_display': graph_display})
+	graph_data = \
+		DataPool(
+			series=
+			 [{'options': { 
+			   'source': Entry.objects.filter(time__gte=graph.starttime, time__lt=graph.endtime)},
+			  'terms': [
+			    'time',
+			    'shedcur',
+			    'outscur',
+			    'gpuavg']}
+			  ])
+	#graph_entry = ModelDataSource(graph_data, fields=[round('shedcur',2), round('outscur',2), round('gpuavg',2)]
+	graph_display = Chart(
+			datasource = graph_data,
+			 series_options = 
+			  [{'options':{ 
+			    'type': 'line',
+			    'stacking': False},
+			   'terms':{
+			     'time': [
+				'shedcur',
+				'outscur',
+				'gpuavg']
+			  }}],
+			 chart_options =
+			   {'title': { 
+				'text': 'Graph Data'},
+			    'xAxis': { 
+				'title': {
+				  'text': date}}})
+
+	
+	#return render_to_response({'graph_display': graph_display})
+	return render_to_response('temp/history_graph.html', {'graph_display': graph_display})	
+	#return render(request, 'temp/history_graph.html', {'graph': graph, 'graph_data': graph_data})
 
 
 def update_entry(request):
