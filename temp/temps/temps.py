@@ -4,7 +4,6 @@ import time
 import datetime
 import subprocess
 import pyowm
-import sys
 import re
 import requests
 import json
@@ -15,6 +14,7 @@ from django.http import request
 import sys
 sys.path.append('/home/pi')
 from apicalls import pyowm_api, pyowm_city
+from minerips import minerips
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -23,13 +23,8 @@ requests.packages.urllib3.disable_warnings()
 base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')[0]
 device_file = device_folder + '/w1_slave'
-script_dir = os.path.dirname(os.path.abspath(__file__))
-print os.path.join(script_dir, '../temp/')
-sys.path.append(os.path.join(script_dir, '../temp/'))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "temp.settings")
 w1_list = glob.glob("/sys/bus/w1/devices/*")
 w1_folder_regex = re.compile('\d+-\d+')
-sensor_reading_regex = re.compile('[\d]+\n')
 w1_list = filter(w1_folder_regex.search, w1_list)
 
 
@@ -61,59 +56,58 @@ class ChoiceData():
         self.gpuhigh = gpuhigh
 
 def gputemps():
-        temptot = list()
-        with open('/home/pi/minerips.txt') as fi:
-                for line in fi:
-                        try:
-                                r = requests.get('http://' + str.strip(line) + ':3333')
-                                d = {"id":"0","jsonrpc":"2.0","method":"miner_getstat1"}
-                                t = re.search('\{[^\}]+\}', r.text)
-                                j = json.loads(t.group(0))
-                                dict = j['result']
+	temptot = list()
+	for line in minerips:
+		try:
+			r = requests.get('http://' + str.strip(line) + ':3333')
+			d = {"id":"0","jsonrpc":"2.0","method":"miner_getstat1"}
+			t = re.search('\{[^\}]+\}', r.text)
+			j = json.loads(t.group(0))
+			dict = j['result']
+			
+			temps = dict[6]
+			tempz = [[]]
+			
+			
+			i = 6
+			y = 0
 
-                                temps = dict[6]
-                                tempz = [[]]
-
-
-                                i = 6
-                                y = 0
-
-                                firstcard = int(temps[0] + temps[1])
-                                tempz.append(firstcard)
-
-                                while i < len(temps):
-                                        y = y + 1
-                                        z = i + 1
-                                        tempentry = int(temps[i] + temps[z])
-                                        tempz.append(tempentry)
-                                        temptot.append(tempz[y])
-                                        i = i + 6
+			firstcard = int(temps[0] + temps[1])
+			tempz.append(firstcard)
+			
+			while i < len(temps):
+				y = y + 1
+				z = i + 1
+				tempentry = int(temps[i] + temps[z])
+				tempz.append(tempentry)
+				temptot.append(tempz[y])
+				i = i + 6
+			
+			if i > len(temps):
+				y = y + 1
+				tempz.append(tempentry)
+				temptot.append(tempz[y])
+			
+			if 'str' in line:
+				break
         
-                                if i > len(temps):
-                                        y = y + 1
-                                        tempz.append(tempentry)
-                                        temptot.append(tempz[y])
 
-                                if 'str' in line:
-                                        break
-        
-
-                        except requests.exceptions.ConnectionError:
-                                continue                
+		except requests.exceptions.ConnectionError:
+			continue                
 
                 
-                sum = 0
-                ct = 0
+	sum = 0
+	ct = 0
 
-                for element in temptot:
-                        sum+=element
-                        ct=ct+1
+	for element in temptot:
+		sum+=element
+		ct=ct+1
 
 
-                gpuavg = sum/ct
-                gpuhigh = max(temptot)
+	gpuavg = sum/ct
+	gpuhigh = max(temptot)
 				
-        return ChoiceData(gpuavg, gpuhigh)
+	return ChoiceData(gpuavg, gpuhigh)
 
 
 gpu_choice = gputemps()

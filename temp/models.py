@@ -17,7 +17,7 @@ import re
 
 class Entry(models.Model):
         class Meta:
-                ordering = ['time']
+                ordering = ['-time']
 	time = models.DateTimeField(default=timezone.now)
 	shedcur = models.FloatField()
 	outscur = models.FloatField()
@@ -29,7 +29,7 @@ class Entry(models.Model):
 
 class History(models.Model):
         class Meta:
-                ordering = ['date']
+                ordering = ['-date']
 	date = models.DateField()
 	avgshed = models.FloatField()
 	highshed = models.FloatField()

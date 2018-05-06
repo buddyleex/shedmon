@@ -3,7 +3,7 @@
 <title>
 Mining Shed Monitor - Live Power
 </title>
-
+<meta http-equiv="refresh" content="300">
 <link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.min.css">              
 <link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.css">
 </head>
@@ -11,16 +11,25 @@ Mining Shed Monitor - Live Power
 
 <table>
 <tr>
-<th colspan=2 align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Current Power</FONT></th>
+<th colspan=3 align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Current Power</FONT></th>
 </tr>
 <tr>
-<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">KwH</FONT></td>
-<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Amps</FONT></td>
+<th colspan=1 align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0"></FONT></th>
+<th colspan=1 align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Watts</FONT></th>
+<th colspan=1 align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Amps</FONT></th>
 </tr>
-<tr> 
-<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">KwH</FONT></td>
-<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Amps</FONT></td>
+<tr>
+<th colspan=1 align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Total</FONT></th>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0"><b>{{ pdupower.1 }}</b></FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0"><b>{{ pdupower.2 }}</b></FONT></td>
 </tr>
+{% for pdu in pdupower.0 %}
+<tr>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ pdu.0 }}</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ pdu.1 }}</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ pdu.2 }}</FONT></td>
+</tr>
+{% endfor %}
 </table>
 
 </html>

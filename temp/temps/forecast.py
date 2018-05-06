@@ -14,7 +14,7 @@ json_data = requests.get(url).json()
 def forecast():
         f_date = json_data['list'][0]['dt_txt']
         re_date = re.search('[0-9]+:[0-9]+:[0-9]+$',f_date).group(0)
-        
+
         if re_date == "00:00:00":
                 x = 4
                 y = 7
@@ -39,13 +39,14 @@ def forecast():
         if re_date == "21:00:00":                                                        
                 x = 5                                                        
                 y = 8
-        
+
+
         f_fore = json_data['list'][y]['weather'][0]['main']
-        f_desc = json_data['list'][y]['weather'][0]['description'] 
+        f_desc = json_data['list'][y]['weather'][0]['description']
         f_icon = json_data['list'][y]['weather'][0]['icon']
-        f_tempam = json_data['list'][x]['main']['temp'] 
-        f_temppm = json_data['list'][y]['main']['temp'] 
-        f_dt = json_data['list'][y]['dt_txt'] 
+        f_tempam = json_data['list'][x]['main']['temp']
+        f_temppm = json_data['list'][y]['main']['temp']
+        f_dt = json_data['list'][y]['dt_txt']
 
 
         f_tempam = round(f_tempam * 9.0 / 5.0 - 459.67, 2)
@@ -57,7 +58,6 @@ def forecast():
         f_dt_day = f_dt_day.replace(" ","",1)
         f_dt_year = re.search('^[0-9]{4}',f_dt).group()
         f_date = f_dt_month + "/" + f_dt_day + "/" + f_dt_year
-        
 
         return f_fore, f_desc, f_icon, f_tempam, f_temppm, f_date
 

@@ -14,6 +14,9 @@ import os
 import glob
 import re
 
+# Load sensitive variables from secrets.py (make sure it's in .gitignore)
+from secrets import *
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DJANGO_ROOT = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
@@ -22,9 +25,6 @@ PROJECT_ROOT = os.path.join(DJANGO_ROOT, '..')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
-
-# Load sensitive variables from secrets.py (make sure it's in .gitignore)
-from secrets import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
     'chartit'
     'temp',
 ]

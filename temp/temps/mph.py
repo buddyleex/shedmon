@@ -4,6 +4,7 @@ import json
 import sys
 sys.path.append('/home/pi')
 from apicalls import mph_api
+from minerips import totalhash, power, cost
 
 requests.packages.urllib3.disable_warnings()
 
@@ -84,10 +85,29 @@ def mph_eth_dashboard():
 def eth_price():
         r = requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/').json()
         ethprice = round(float(r[0]['price_usd']),2)
-        ethprice = "$" + str(ethprice)
+        ethprice = '${:,.2f}'.format(ethprice)
         return ethprice
+
+
+def eth_profit():
+        r = requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/').json()
+        eth_price = round(float(r[0]['price_usd']),2)
+        r = requests.get('https://whattomine.com/coins/151.json').json()
+        block_time = r['block_time']
+        block_reward = r['block_reward']
+        nethash = r['nethash']
+        total_power = power * float(24) * float(30)
+        total_cost = total_power * cost
+        hash_vs_nethash = totalhash / nethash
+        block_and_time = float(block_reward) * float(86400) / float(block_time)
+        gross_profit = hash_vs_nethash * block_and_time * eth_price * float(30)
+        net_profit = round(gross_profit - total_cost,2)           
+        net_profit = '${:,.2f}'.format(net_profit)
+        return net_profit
+
 
 #print mph_eth_confirmed_balance()
 #print mph_eth_dashboard()[0]
 #print mph_eth_dashboard()[1]
 #print eth_price()
+#print eth_profit()
