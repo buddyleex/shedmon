@@ -29,7 +29,6 @@ def live_readout(request):
 
 def entry_list(request):
 	entries = Entry.objects.filter(time__gte=three_day(), time__lt=timezone.now()).order_by('-time')
-	#entries = Entry.objects.all().order_by('-time')
 	return render(request, 'temp/entry_list.html', {'entries': entries})
 
 
@@ -98,6 +97,10 @@ def live_power(request):
 
 def live_mphpool(request):
 	return render(request, 'temp/live_mphpool.html', {'eth_balance' : mph_eth_confirmed_balance(), 'eth_nethash' : mph_eth_dashboard()[0], 'eth_last24hr' : mph_eth_dashboard()[1], 'eth_price' : eth_price(), 'eth_profit': eth_profit()})
+
+
+def live_camera(request):
+        return render(request, 'temp/live_camera.html', {})
 
 
 def three_day():

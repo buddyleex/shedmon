@@ -1,19 +1,13 @@
 import requests
 import re
 import json
+from pysnmp.hlapi import *
 import sys
 sys.path.append('/home/pi')
 from apicalls import mph_api
-from minerips import totalhash, power, cost
+from minerips import totalhash, power, cost, pduips
 
 requests.packages.urllib3.disable_warnings()
-
-
-#class ChoiceData():
-#    def __init__(self, nethash, last24hr):
-#        # you can put here some validation logic
-#        self.nethash = nethash
-#        self.last24hr = last24hr
 
 
 def num_before_point(x):
@@ -90,13 +84,45 @@ def eth_price():
 
 
 def eth_profit():
+	x = 0
+        pduAll = []
+        totalwatts = int("0")  
+        for line in pduips:
+                if x < len(pduips):
+                        errorIndication, errorStatus, errorIndex, varBinds = next(
+                                getCmd(SnmpEngine(),
+                                        CommunityData('pub', mpModel=0),
+                                        UdpTransportTarget((pduips[x], 161)),
+                                        ContextData(),
+                                        ObjectType(ObjectIdentity('iso.3.6.1.4.1.232.165.2.3.1.1.4.1')))
+                                        )
+
+                        if errorIndication:
+                                x=x+1
+                                continue
+                        elif errorStatus:
+                                x=x+1
+                                continue
+                        else:
+                                x=x+1
+                                for varBind in varBinds:
+                                        pduAll.append(int(varBind[1])) 
+
+        x = 0
+        
+        for pdu in pduAll:
+                totalwatts = int(totalwatts) +  int(pduAll[x])
+                x=x+1
+
+	totalwatts = round(float(totalwatts) / float("1000"),2)
+	
         r = requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/').json()
         eth_price = round(float(r[0]['price_usd']),2)
         r = requests.get('https://whattomine.com/coins/151.json').json()
         block_time = r['block_time']
         block_reward = r['block_reward']
         nethash = r['nethash']
-        total_power = power * float(24) * float(30)
+        total_power = totalwatts * float(24) * float(30)
         total_cost = total_power * cost
         hash_vs_nethash = totalhash / nethash
         block_and_time = float(block_reward) * float(86400) / float(block_time)
@@ -104,6 +130,7 @@ def eth_profit():
         net_profit = round(gross_profit - total_cost,2)           
         net_profit = '${:,.2f}'.format(net_profit)
         return net_profit
+
 
 
 #print mph_eth_confirmed_balance()

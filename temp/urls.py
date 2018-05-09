@@ -13,4 +13,5 @@ urlpatterns = [
 	url(r'live_power', views.live_power, name='live_power'),
 	url(r'live_mphpool',views.live_mphpool, name='live_mphpool'),
 	url(r'^history_graph/(?P<date>[0-9]{4}\-[0-9]{2}\-[0-9]{2})$', views.history_graph, name='history_graph'),
+	url(r'^live_camera', views.live_camera, name='live_camera'),
 ]
