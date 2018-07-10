@@ -42,3 +42,34 @@ class History(models.Model):
 
 	def __str__(self):
 		return self.date.strftime("%m/%d/%Y")
+
+class Coins(models.Model):
+	class Meta:
+		ordering = ['name']
+	abv = models.CharField(max_length=100)
+	name = models.CharField(max_length=100)
+	wtm = models.IntegerField()
+	cmc = models.IntegerField()
+	polo = models.CharField(max_length=100,default="0")
+	grav = models.CharField(max_length=100,default="0")
+	cbri = models.CharField(max_length=100,default="0")
+	algo = models.CharField(max_length=100,default="none")
+
+	def __str__(self):
+		return self.name
+
+class Difficulty(models.Model):
+        class Meta:
+                ordering = ['-time']
+        time = models.DateTimeField(default=timezone.now)
+        abv = models.CharField(max_length=100)
+        name = models.CharField(max_length=100)
+	price = models.CharField(max_length=100)
+	nethash = models.FloatField()
+	blockr = models.FloatField()
+	blockt = models.FloatField()
+	algo = models.CharField(max_length=100,default="none")
+
+        def __str__(self):
+		template = '{0.time} {0.name}'
+                return template.format(self)

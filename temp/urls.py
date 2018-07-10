@@ -14,4 +14,7 @@ urlpatterns = [
 	url(r'live_mphpool',views.live_mphpool, name='live_mphpool'),
 	url(r'^history_graph/(?P<date>[0-9]{4}\-[0-9]{2}\-[0-9]{2})$', views.history_graph, name='history_graph'),
 	url(r'^live_camera', views.live_camera, name='live_camera'),
+	url(r'^update_difficulty', views.update_difficulty, name='update_difficulty'),
+	url(r'^display_last_difficulty', views.display_last_difficulty, name='display_last_difficulty'),
+	url(r'^display_daily_profit', views.display_daily_profit, name='display_daily_profit'),
 ]

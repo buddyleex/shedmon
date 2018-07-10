@@ -5,7 +5,7 @@ from pysnmp.hlapi import *
 import sys
 sys.path.append('/home/pi')
 from apicalls import mph_api
-from minerips import totalhash, power, cost, pduips
+from minerips import powercost, ethtotalhash, ethpower, dcrtotalhash, dcrpower, btctotalhash, btcpower
 
 requests.packages.urllib3.disable_warnings()
 
@@ -39,7 +39,7 @@ def hash(num):
         elif bool(re.search('e',str(num))) == False:
                 if num_before_point(num) > int("0") and num_before_point(num) < int("4"):
                         num = round(num,2)
-                        return str(num) + " H/s"
+                        return str(num) + " h/s"
                 if num_before_point(num) > int("3") and num_before_point(num) < int("7"):
                         num = round(float(num/1000),2)
                         return str(num) + " Kh/s"
@@ -58,83 +58,81 @@ def mph_eth_confirmed_balance():
         j = r['getuserbalance']['data']['confirmed']
         return j
 
-#def mph_all_balance():
-#       r = requests.get('https://miningpoolhub.com/index.php?page=api&action=getuserallbalances&api_key=' + mph_api).json()
-#       coins = []
-#       key = 0
-#       for entry in r['getuserallbalances']['data']:
-#               coins.append(r['getuserallbalances']['data'][key]['coin'])
-#               coins.append(r['getuserallbalances']['data'][key]['confirmed'])
-#               key +=1
-#       return coins
-        
 
 def mph_eth_dashboard():
         r = requests.get('https://ethereum.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=' + mph_api).json()
         nethash = r['getdashboarddata']['data']['raw']['network']['hashrate']
         last24hr = round(r['getdashboarddata']['data']['recent_credits_24hours']['amount'],4)
-        return hash(nethash), last24hr
-
-
-def eth_price():
-        r = requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/').json()
-        ethprice = round(float(r[0]['price_usd']),2)
-        ethprice = '${:,.2f}'.format(ethprice)
-        return ethprice
+        return last24hr
 
 
 def eth_profit():
-	x = 0
-        pduAll = []
-        totalwatts = int("0")  
-        for line in pduips:
-                if x < len(pduips):
-                        errorIndication, errorStatus, errorIndex, varBinds = next(
-                                getCmd(SnmpEngine(),
-                                        CommunityData('pub', mpModel=0),
-                                        UdpTransportTarget((pduips[x], 161)),
-                                        ContextData(),
-                                        ObjectType(ObjectIdentity('iso.3.6.1.4.1.232.165.2.3.1.1.4.1')))
-                                        )
-
-                        if errorIndication:
-                                x=x+1
-                                continue
-                        elif errorStatus:
-                                x=x+1
-                                continue
-                        else:
-                                x=x+1
-                                for varBind in varBinds:
-                                        pduAll.append(int(varBind[1])) 
-
-        x = 0
-        
-        for pdu in pduAll:
-                totalwatts = int(totalwatts) +  int(pduAll[x])
-                x=x+1
-
-	totalwatts = round(float(totalwatts) / float("1000"),2)
-	
         r = requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/').json()
         eth_price = round(float(r[0]['price_usd']),2)
+	f_eth_price = '${:,.2f}'.format(eth_price)
         r = requests.get('https://whattomine.com/coins/151.json').json()
         block_time = r['block_time']
         block_reward = r['block_reward']
         nethash = r['nethash']
-        total_power = totalwatts * float(24) * float(30)
-        total_cost = total_power * cost
-        hash_vs_nethash = totalhash / nethash
+	f_nethash = float(nethash)
+	daily_power = ethpower * float(24)
+        total_power = ethpower * float(24) * float(30)
+        total_cost = total_power * powercost
+	daily_cost = daily_power * powercost
+        hash_vs_nethash = ethtotalhash / nethash
         block_and_time = float(block_reward) * float(86400) / float(block_time)
-        gross_profit = hash_vs_nethash * block_and_time * eth_price * float(30)
-        net_profit = round(gross_profit - total_cost,2)           
-        net_profit = '${:,.2f}'.format(net_profit)
-        return net_profit
+        gross_monthly = hash_vs_nethash * block_and_time * eth_price * float(30)
+	gross_daily = hash_vs_nethash * block_and_time * eth_price
+        unf_net_monthly = round(gross_monthly - total_cost,2)     
+        net_monthly = '${:,.2f}'.format(unf_net_monthly)
+	unf_net_daily = round(gross_daily - daily_cost,2)
+	net_daily = '${:,.2f}'.format(unf_net_daily)
+        return net_monthly, net_daily, f_eth_price, unf_net_monthly, unf_net_daily, hash(f_nethash)
 
 
+def dcr_profit():
+        r = requests.get('https://api.coinmarketcap.com/v1/ticker/decred/').json() 
+        dcr_price = round(float(r[0]['price_usd']),2) 
+	f_dcr_price = '${:,.2f}'.format(dcr_price)
+        r = requests.get('https://whattomine.com/coins/152.json').json()
+        block_time = r['block_time']
+        block_reward = r['block_reward']
+        nethash = r['nethash']
+	f_nethash = float(nethash)
+        daily_power = dcrpower * float(24)
+        total_power = dcrpower * float(24) * float(30)
+        total_cost = total_power * powercost
+        daily_cost = daily_power * powercost
+        hash_vs_nethash = dcrtotalhash / nethash
+        block_and_time = float(block_reward) * float(86400) / float(block_time)
+        gross_monthly = hash_vs_nethash * block_and_time * dcr_price * float(30)
+        gross_daily = hash_vs_nethash * block_and_time * dcr_price
+        unf_net_monthly = round(gross_monthly - total_cost,2)     
+        net_monthly = '${:,.2f}'.format(unf_net_monthly)
+        unf_net_daily = round(gross_daily - daily_cost,2)
+        net_daily = '${:,.2f}'.format(unf_net_daily)
+        return net_monthly, net_daily, f_dcr_price, unf_net_monthly, unf_net_daily, hash(f_nethash)
 
-#print mph_eth_confirmed_balance()
-#print mph_eth_dashboard()[0]
-#print mph_eth_dashboard()[1]
-#print eth_price()
-#print eth_profit()
+
+def btc_profit():
+        r = requests.get('https://api.coinmarketcap.com/v1/ticker/bitcoin/').json() 
+        btc_price = round(float(r[0]['price_usd']),2) 
+        f_btc_price = '${:,.2f}'.format(btc_price)
+        r = requests.get('https://whattomine.com/coins/1.json').json()
+        block_time = r['block_time']
+        block_reward = r['block_reward']
+        nethash = r['nethash']
+	f_nethash = float(nethash)
+        daily_power = btcpower * float(24)
+        total_power = btcpower * float(24) * float(30)
+        total_cost = total_power * powercost
+        daily_cost = daily_power * powercost
+        hash_vs_nethash = btctotalhash / nethash
+        block_and_time = float(block_reward) * float(86400) / float(block_time)
+        gross_monthly = hash_vs_nethash * block_and_time * btc_price * float(30)
+        gross_daily = hash_vs_nethash * block_and_time * btc_price
+        unf_net_monthly = round(gross_monthly - total_cost,2)     
+        net_monthly = '${:,.2f}'.format(unf_net_monthly)
+        unf_net_daily = round(gross_daily - daily_cost,2)
+        net_daily = '${:,.2f}'.format(unf_net_daily)
+        return net_monthly, net_daily, f_btc_price, unf_net_monthly, unf_net_daily, hash(f_nethash)

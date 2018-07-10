@@ -30,7 +30,7 @@ PROJECT_ROOT = os.path.join(DJANGO_ROOT, '..')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.101.101.245','127.0.0.1','pimon','localhost']
+ALLOWED_HOSTS = ['10.101.101.245','127.0.0.1','pimon','localhost','dreariest-weasel-8203.dataplicity.io']
 
 
 # Application definition
@@ -144,4 +144,5 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     ("usbdrive/current", "/home/pi/usbdrive/current"),
+    ("usbdrive/ethman", "/home/pi/usbdrive/ethman"),
 ]
