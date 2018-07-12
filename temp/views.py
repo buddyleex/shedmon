@@ -51,14 +51,19 @@ def live_mphpool(request):
         unf_dcr_monthly = dcr_profit()[3]
         unf_btc_daily = btc_profit()[4]
         unf_btc_monthly = btc_profit()[3]
-        unf_total_daily = unf_eth_daily + unf_dcr_daily + unf_btc_daily
+	unf_aeg_price = btc_profit()[6]
+	unf_aeg_daily = aeg_profit(unf_aeg_price)[4]
+	unf_aeg_monthly = aeg_profit(unf_aeg_price)[3]
+        unf_total_daily = unf_eth_daily + unf_dcr_daily + unf_btc_daily + unf_aeg_daily
         total_daily = '${:,.2f}'.format(unf_total_daily)
-        unf_total_monthly = unf_eth_monthly + unf_dcr_monthly + unf_btc_monthly
+        unf_total_monthly = unf_eth_monthly + unf_dcr_monthly + unf_btc_monthly + unf_aeg_monthly
         total_monthly = '${:,.2f}'.format(unf_total_monthly)
-        return render(request, 'temp/live_mphpool.html', {'eth_balance' : mph_eth_confirmed_balance(), 'eth_last24hr' : mph_eth_dashboard(), 'eth_nethash' : eth_profit()[5], 
-        'eth_price' : eth_profit()[2], 'eth_profit' : eth_profit()[0], 'eth_daily_profit' : eth_profit()[1], 'dcr_nethash' : dcr_profit()[5], 'dcr_price' : dcr_profit()[2],
-	'dcr_profit': dcr_profit()[0], 'dcr_daily_profit': dcr_profit()[1], 'btc_nethash': btc_profit()[5], 'btc_price': btc_profit()[2], 'btc_profit': btc_profit()[0],
-	'btc_daily_profit': btc_profit()[1], 'total_daily': total_daily, 'total_monthly': total_monthly})
+        return render(request, 'temp/live_mphpool.html', {'eth_balance' : mph_eth_dashboard()[0], 'eth_hashrate': mph_eth_dashboard()[1], 'eth_last24hr' : mph_eth_dashboard()[2], 
+	'eth_nethash' : eth_profit()[5], 'eth_price' : eth_profit()[2], 'eth_profit' : eth_profit()[0], 'eth_daily_profit' : eth_profit()[1], 'dcr_balance': supr_dcr_dashboard()[0],
+	'dcr_hashrate': supr_dcr_dashboard()[1], 'dcr_nethash' : dcr_profit()[5], 'dcr_price' : dcr_profit()[2], 'dcr_profit': dcr_profit()[0], 'dcr_daily_profit': dcr_profit()[1], 
+	'btc_balance': slush_btc_dashboard()[0], 'btc_hashrate': slush_btc_dashboard()[1], 'btc_nethash': btc_profit()[5], 'btc_price': btc_profit()[2], 'btc_profit': btc_profit()[0],
+	'btc_daily_profit': btc_profit()[1], 'aeg_price': aeg_profit(unf_aeg_price)[2], 'aeg_profit': aeg_profit(unf_aeg_price)[0], 'aeg_daily_profit': aeg_profit(unf_aeg_price)[1],
+	'total_daily': total_daily, 'total_monthly': total_monthly})
 
 
 def update_difficulty(request):

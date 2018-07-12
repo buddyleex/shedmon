@@ -4,7 +4,7 @@ import json
 from pysnmp.hlapi import *
 import sys
 sys.path.append('/home/pi')
-from apicalls import mph_api
+from apicalls import supr_dcr_api, supr_dcr_id, slush_btc_api, slush_btc_id, mph_api
 from minerips import powercost, ethtotalhash, ethpower, dcrtotalhash, dcrpower, btctotalhash, btcpower
 
 requests.packages.urllib3.disable_warnings()
@@ -53,17 +53,34 @@ def hash(num):
                 return "N/A"
 
 
-def mph_eth_confirmed_balance(): 
-        r = requests.get('https://ethereum.miningpoolhub.com/index.php?page=api&action=getuserbalance&api_key=' + mph_api + '&argument=id').json()
-        j = r['getuserbalance']['data']['confirmed']
-        return j
-
-
 def mph_eth_dashboard():
+        r = requests.get('https://ethereum.miningpoolhub.com/index.php?page=api&action=getuserbalance&api_key=' + mph_api + '&argument=id').json()
+        eth_conf_balance = round(float(r['getuserbalance']['data']['confirmed']),4)
         r = requests.get('https://ethereum.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=' + mph_api).json()
-        nethash = r['getdashboarddata']['data']['raw']['network']['hashrate']
-        last24hr = round(r['getdashboarddata']['data']['recent_credits_24hours']['amount'],4)
-        return last24hr
+        eth_hashrate = round(float(r['getdashboarddata']['data']['raw']['personal']['hashrate'])/float('1000000'),2)
+        eth_hashrate = str(eth_hashrate) + str("Gh/s")
+        r = requests.get('https://ethereum.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=' + mph_api).json()
+        eth_last24hr = round(r['getdashboarddata']['data']['recent_credits_24hours']['amount'],4)
+        return eth_conf_balance, eth_hashrate, eth_last24hr
+
+
+def supr_dcr_dashboard():
+	r = requests.get('https://dcr.suprnova.cc/index.php?page=api&action=getuserbalance&api_key=' + supr_dcr_api + '&id=' + supr_dcr_id).json()
+	dcr_conf_balance = round(float(r['getuserbalance']['data']['confirmed']),4) 
+	r = requests.get('https://dcr.suprnova.cc/index.php?page=api&action=getuserworkers&api_key=' + supr_dcr_api + '&id=' + supr_dcr_id).json()
+	dcr_hashrate = round(float(r['getuserworkers']['data'][14]['hashrate'])/float('1000000000'),2)
+	dcr_hashrate = str(dcr_hashrate) + str("Th/s")
+	return dcr_conf_balance, dcr_hashrate
+
+
+def slush_btc_dashboard():
+	r = requests.get('https://slushpool.com/accounts/profile/json/' + slush_btc_api).json()
+	btc_conf_balance = round(float(r['confirmed_reward']),5)
+	btc_hashrate = round(float(r['hashrate'])/float('1000000'),2)
+	btc_hashrate = str(btc_hashrate) + str("Th/s")
+	#btc_worker1 = r['workers'][slush_btc_id + '.ants9_1']['alive']
+	#btc_worker2 = r['workers'][slush_btc_id + '.ants9_2']['alive']
+	return btc_conf_balance, btc_hashrate
 
 
 def eth_profit():
@@ -116,7 +133,9 @@ def dcr_profit():
 
 def btc_profit():
         r = requests.get('https://api.coinmarketcap.com/v1/ticker/bitcoin/').json() 
-        btc_price = round(float(r[0]['price_usd']),2) 
+        btc_price = round(float(r[0]['price_usd']),2)
+	r = requests.get('https://graviex.net//api/v2/tickers.json').json()
+	unf_aeg_price = float(r['aegbtc']['ticker']['last']) * btc_price
         f_btc_price = '${:,.2f}'.format(btc_price)
         r = requests.get('https://whattomine.com/coins/1.json').json()
         block_time = r['block_time']
@@ -135,4 +154,21 @@ def btc_profit():
         net_monthly = '${:,.2f}'.format(unf_net_monthly)
         unf_net_daily = round(gross_daily - daily_cost,2)
         net_daily = '${:,.2f}'.format(unf_net_daily)
-        return net_monthly, net_daily, f_btc_price, unf_net_monthly, unf_net_daily, hash(f_nethash)
+        return net_monthly, net_daily, f_btc_price, unf_net_monthly, unf_net_daily, hash(f_nethash), unf_aeg_price
+
+
+def aeg_profit(unf_aeg_price):
+	payoutMN = float('63')
+	f_aeg_price = '${:,.5f}'.format(unf_aeg_price)
+	r = requests.get('http://api-aegeus.mn.zone/masternodes').json()
+	totalMN = float(len(r['nodes']))
+	dailycycles = float('1440') / float(totalMN)
+	partdaily = float('24') * dailycycles
+	percdaily = float('24') / partdaily
+	parthourly = float('24') * percdaily
+	unf_net_daily = (dailycycles * payoutMN * unf_aeg_price) - float('0.17')
+	net_daily = '${:,.2f}'.format(unf_net_daily)
+	monthlycycles = float('720') / parthourly
+	unf_net_monthly = (monthlycycles * payoutMN * unf_aeg_price) - float('5')
+	net_monthly = '${:,.2f}'.format(unf_net_monthly)
+	return net_monthly, net_daily, f_aeg_price, unf_net_monthly, unf_net_daily 

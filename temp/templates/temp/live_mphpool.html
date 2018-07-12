@@ -31,7 +31,7 @@ Mining Shed Monitor - Live Pool Monitor
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">ETH</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ eth_balance }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ eth_last24hr }}</FONT></td>
-<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">x.xx Gh/s</FONT></td>   
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ eth_hashrate }}</FONT></td>   
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ eth_nethash }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ eth_price }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ eth_profit }}</FONT></td>
@@ -39,9 +39,9 @@ Mining Shed Monitor - Live Pool Monitor
 </tr>
 <tr>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">BTC</FONT></td>              
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ btc_balance }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">N/A</FONT></td>
-<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">N/A</FONT></td>
-<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">x.xx Th/s</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ btc_hashrate }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ btc_nethash }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ btc_price }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ btc_profit }}</FONT></td>
@@ -49,13 +49,23 @@ Mining Shed Monitor - Live Pool Monitor
 </tr>
 <tr>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">DCR</FONT></td>              
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ dcr_balance }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">N/A</FONT></td>
-<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">N/A</FONT></td>
-<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">x.xx Th/s</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ dcr_hashrate }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ dcr_nethash }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ dcr_price }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ dcr_profit }}</FONT></td>
 <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ dcr_daily_profit }}</FONT></td>
+</tr>
+<tr>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">AEG</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">N/A</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">N/A</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">N/A</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">N/A</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ aeg_price }}</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ aeg_profit }}</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ aeg_daily_profit }}</FONT></td>
 </tr>
 </table>
 
