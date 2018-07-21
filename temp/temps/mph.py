@@ -4,7 +4,7 @@ import json
 from pysnmp.hlapi import *
 import sys
 sys.path.append('/home/pi')
-from apicalls import supr_dcr_api, supr_dcr_id, slush_btc_api, slush_btc_id, mph_api
+from apicalls import supr_dcr_api, supr_dcr_id, slush_btc_api, slush_btc_id, mph_api, dcraddress
 from minerips import powercost, ethtotalhash, ethpower, dcrtotalhash, dcrpower, btctotalhash, btcpower
 
 requests.packages.urllib3.disable_warnings()
@@ -57,11 +57,23 @@ def mph_eth_dashboard():
         r = requests.get('https://ethereum.miningpoolhub.com/index.php?page=api&action=getuserbalance&api_key=' + mph_api + '&argument=id').json()
         eth_conf_balance = round(float(r['getuserbalance']['data']['confirmed']),4)
         r = requests.get('https://ethereum.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=' + mph_api).json()
+        eth_last24hr = round(r['getdashboarddata']['data']['recent_credits_24hours']['amount'],4)
+        r = requests.get('https://miningpoolhub.com/index.php?page=api&action=getautoswitchingandprofitsstatistics').json()
+        ethcoin = r['return'][5]['current_mining_coin']
+        r = requests.get('https://' + ethcoin + '.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=' + mph_api).json()
         eth_hashrate = round(float(r['getdashboarddata']['data']['raw']['personal']['hashrate'])/float('1000000'),2)
         eth_hashrate = str(eth_hashrate) + str("Gh/s")
-        r = requests.get('https://ethereum.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=' + mph_api).json()
-        eth_last24hr = round(r['getdashboarddata']['data']['recent_credits_24hours']['amount'],4)
-        return eth_conf_balance, eth_hashrate, eth_last24hr
+	if ethcoin == "ethereum":
+		f_ethcoin = str("ETH")
+	elif ethcoin == "ethereum-classic":
+		f_ethcoin = str("ETC")
+	elif ethcoin == "expanse":
+		f_ethcoin = str("EXP")
+	elif ethcoin == "musiccoin":
+		f_ethcoin = str("MUS")
+	else:
+		f_ethcoin = str("fail")
+        return eth_conf_balance, eth_hashrate, eth_last24hr, f_ethcoin
 
 
 def supr_dcr_dashboard():
@@ -70,6 +82,15 @@ def supr_dcr_dashboard():
 	r = requests.get('https://dcr.suprnova.cc/index.php?page=api&action=getuserworkers&api_key=' + supr_dcr_api + '&id=' + supr_dcr_id).json()
 	dcr_hashrate = round(float(r['getuserworkers']['data'][14]['hashrate'])/float('1000000000'),2)
 	dcr_hashrate = str(dcr_hashrate) + str("Th/s")
+	return dcr_conf_balance, dcr_hashrate
+
+
+def lux_dcr_dashboard():
+	r = requests.get('http://mining.luxor.tech/API/DCR/user/' + dcraddress).json()
+	dcr_conf_balance = float(r['balance'])
+	dcr_conf_balance = round(dcr_conf_balance / float('100000000'), 5)
+	dcr_hashrate = r['hashrate_1h']
+	dcr_hashrate = str(round(float(dcr_hashrate) / float('1000000000000'), 2)) + str('Th/s')
 	return dcr_conf_balance, dcr_hashrate
 
 

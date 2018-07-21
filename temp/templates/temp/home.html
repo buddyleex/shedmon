@@ -7,7 +7,11 @@ Mining Shed Monitor
 <link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.css">
 </head>
 
-<style> table {	border-collapse: collapse;} {height:20px} table, th, td {border: none} </style>
+<style> 
+table {	border-collapse: collapse;} {height:5px} table, th, td {border: none} 
+.tg .tg-yw4l{vertical-align:top}
+.tg .tg-uiv9{vertical-align:bottom}
+</style>
 
 <div id="title">
  <h1><FONT COLOR="#FFFFFF">Mining Shed Monitor</FONT></h1>
@@ -19,28 +23,42 @@ Mining Shed Monitor
 </div>
 
 <table>
-<tr>
-<td style="height:180px;width:260px">
-<iframe src="live_power.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px;" frameBorder="0" scrolling="no">
-</iframe>
-</td>
-<td style="height:140px;width:180px">
-<iframe src="live_readout.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px" frameBorder="0" scrolling="no">
-</iframe>
-</td>
-<td style="height:140px;width:280px">
-<iframe src="live_forecast.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px" frameBorder="0" scrolling="no">
-</iframe>
-</td>
-<td style="height:140px;width:720px">
-<iframe src="live_mphpool.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px" frameBorder="0" scrolling="no">
-</iframe>
-</td>
-<td style="height:280px;width:420px">
-<iframe src="live_camera.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px" frameBorder="0" scrolling="no">
-</iframe>
-</td>
-</tr>
+	<tr>
+		<td style="height:180px;width:245px" rowspan="2">
+			<iframe src="live_power.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px;" frameBorder="0" scrolling="no">
+			</iframe>
+		</td>
+		<td class="tg-uiv9" style="height:135px;width:255px">
+			<iframe src="live_readout.html" style="height:50%;width:100%;position:relative;top:0px;bottom:0px" frameBorder="0" scrolling="no">
+			</iframe>
+		</td>
+		<td style="height:280px;width:255px" rowspan="2">
+			<iframe src="live_wallet.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px" frameBorder="0" scrolling="no">
+			</iframe>
+		</td>
+		<td style="height:140px;width:715px" colspan="2">
+			<iframe src="live_mphpool.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px" frameBorder="0" scrolling="no">
+			</iframe>
+		</td>
+		<td style="height:320px;width:420px" rowspan="2">
+			<iframe src="live_camera.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px" frameBorder="0" scrolling="no">
+			</iframe>
+		</td>
+	</tr>
+	<tr>
+		<td class="tg-yw4l" style="height:135px;width:255px">
+			<iframe src="live_forecast.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px" frameBorder="0" scrolling="no">
+			</iframe>
+		</td>
+		<td class="tg-yw4l" style="height:180px;width:400px">
+			<iframe src="live_asicminers.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px" frameBorder="0" scrolling="no">
+			</iframe>
+		</td>
+		<td class="tg-yw4l" style="height:180px;width:315px">
+			<iframe src="live_gpuminers.html" style="height:100%;width:100%;position:relative;top:0px;bottom:0px" frameBorder="0" scrolling="no">
+			</iframe>
+		</td>
+	</tr>
 </table>
 
 

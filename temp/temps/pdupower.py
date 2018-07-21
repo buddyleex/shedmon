@@ -19,7 +19,7 @@ def pdustats():
 			errorIndication, errorStatus, errorIndex, varBinds = next(
     				getCmd(SnmpEngine(),
           				CommunityData('pub', mpModel=0),
-           				UdpTransportTarget((pduips[x], 161)),
+           				UdpTransportTarget((line, 161)),
            				ContextData(),
 					ObjectType(ObjectIdentity('iso.3.6.1.2.1.1.5.0')),
 					ObjectType(ObjectIdentity('iso.3.6.1.4.1.232.165.2.3.1.1.4.1')))

@@ -1,0 +1,32 @@
+<html>
+<head>
+<title>
+Mining Shed Monitor - Live ASIC Miners
+</title>
+<meta http-equiv="refresh" content="35">
+<link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.min.css">
+<link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.css">
+</head>
+
+<style> table { border-collapse: collapse;} table, th, td {border: 1px solid #606060; padding-left: 10px; padding-right: 10px </style>
+
+<table>
+<tr>
+<th colspan=6 align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">ASIC Monitor</FONT></th>
+</tr>
+<tr>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">ASIC</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Hash</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center" colspan=4><FONT COLOR="#A0A0A0">Temps</FONT></td>
+</tr>
+{% for miner in miners %}
+<tr>
+<td align="center" style="white-space: nowrap;text-align:center"><A HREF="http://{{ miner.7 }}" style="color: {{ miner.5 }}" target="_blank">{{ miner.6 }}</a></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ miner.4 }}</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ miner.0 }}</FONT></td>
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ miner.1 }}</FONT></td> 
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ miner.2 }}</FONT></td> 
+<td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">{{ miner.3 }}</FONT></td> 
+</tr>
+{% endfor %}
+</table>

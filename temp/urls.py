@@ -17,4 +17,7 @@ urlpatterns = [
 	url(r'^update_difficulty', views.update_difficulty, name='update_difficulty'),
 	url(r'^display_last_difficulty', views.display_last_difficulty, name='display_last_difficulty'),
 	url(r'^display_daily_profit', views.display_daily_profit, name='display_daily_profit'),
+	url(r'^live_wallet', views.live_wallet, name='live_wallet'),
+	url(r'^live_asicminers', views.live_asicminers, name='live_asicminers'),
+	url(r'^live_gpuminers', views.live_gpuminers, name='live_gpuminers'),
 ]

@@ -59,7 +59,7 @@ def gputemps():
 	temptot = list()
 	for line in minerips:
 		try:
-			r = requests.get('http://' + str.strip(line) + ':3333')
+			r = requests.get('http://' + str.strip(line[0]) + ':3333')
 			d = {"id":"0","jsonrpc":"2.0","method":"miner_getstat1"}
 			t = re.search('\{[^\}]+\}', r.text)
 			j = json.loads(t.group(0))

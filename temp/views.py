@@ -13,6 +13,9 @@ from temps.mph import *
 from temps.pdupower import *
 from temps.difficulty import *
 from temps.dailyprofit import *
+from temps.walletbalance import *
+from temps.asicmonitor import *
+from temps.gpumonitor import *
 
 import time
 from datetime import timedelta
@@ -44,26 +47,87 @@ def update_history(request):
 	history.save()
 
 
+def live_gpuminers(request):
+	miners = []
+	for ip in minerips:
+		if claymore_check_rig(ip[0]) is False:
+			insert = []
+			insert.append(ip[0])
+			insert.append("Hash Low")
+			insert.append("red")
+			miners.append(insert)
+		elif claymore_check_rig(ip[0]) == str('offline'):
+			insert = []
+                        insert.append(ip[0])
+                        insert.append("Offline")
+			insert.append("red")
+                        miners.append(insert)
+		elif claymore_check_rig(ip[0]) is True:
+			continue
+		else:
+			continue
+	
+	if len(miners) == int('0'):
+		insert = []
+		insert.append("All Miners")
+		insert.append("Online")
+		insert.append("green")
+		miners.append(insert)
+		gpuminers = miners
+	else:
+		gpuminers = miners
+					
+
+	return render(request, 'temp/live_gpuminers.html', {'miners': gpuminers})
+
+
+def live_asicminers(request):
+	asicminers = []
+	for asic in ants9ips:
+		asicminers.append(check_antminer_s9i(asic[0], asic[1], 4028))
+	for asic in antd3ips:
+		asicminers.append(check_antminer_d3(asic[0], asic[1], 4028))
+	for asic in innod9ips:
+		asicminers.append(check_inno_d9(asic[0], asic[1], 4028))
+	return render(request, 'temp/live_asicminers.html', {'miners' : asicminers})
+
+
+def live_wallet(request):
+	wallet_balance_r = wallet_balance()
+	return render(request, 'temp/live_wallet.html', {'total_balance' : wallet_balance_r[0], 'eth_balance' : wallet_balance_r[1], 'eth_balance_price' : wallet_balance_r[2], 
+	'btc_balance' : wallet_balance_r[3], 'btc_balance_price' : wallet_balance_r[4], 'aeg_balance' : wallet_balance_r[5], 'aeg_balance_price' : wallet_balance_r[6], 
+	'ubiq_balance' : wallet_balance_r[7], 'ubiq_balance_price' : wallet_balance_r[8], 'sia_balance' : wallet_balance_r[9], 'sia_balance_price' : wallet_balance_r[10], 
+	'rvn_balance' : wallet_balance_r[11], 'rvn_balance_price' : wallet_balance_r[12], 'xrp_balance' : wallet_balance_r[13], 'xrp_balance_price' : wallet_balance_r[14], 
+	'dcr_balance' : wallet_balance_r[15], 'dcr_balance_price' : wallet_balance_r[16]})
+
+
 def live_mphpool(request):
-        unf_eth_daily = eth_profit()[4]
-        unf_eth_monthly = eth_profit()[3]
-        unf_dcr_daily = dcr_profit()[4]
-        unf_dcr_monthly = dcr_profit()[3]
-        unf_btc_daily = btc_profit()[4]
-        unf_btc_monthly = btc_profit()[3]
-	unf_aeg_price = btc_profit()[6]
-	unf_aeg_daily = aeg_profit(unf_aeg_price)[4]
-	unf_aeg_monthly = aeg_profit(unf_aeg_price)[3]
+	eth_profit_r = eth_profit()
+	dcr_profit_r = dcr_profit()
+	btc_profit_r = btc_profit()
+	mph_eth_dashboard_r = mph_eth_dashboard()
+	lux_dcr_dashboard_r = lux_dcr_dashboard()
+	slush_btc_dashboard_r = slush_btc_dashboard()
+        unf_eth_daily = eth_profit_r[4]
+        unf_eth_monthly = eth_profit_r[3]
+        unf_dcr_daily = dcr_profit_r[4]
+        unf_dcr_monthly = dcr_profit_r[3]
+        unf_btc_daily = btc_profit_r[4]
+        unf_btc_monthly = btc_profit_r[3]
+	unf_aeg_price = btc_profit_r[6]
+	aeg_profit_r = aeg_profit(unf_aeg_price)
+	unf_aeg_daily = aeg_profit_r[4]
+	unf_aeg_monthly = aeg_profit_r[3]
         unf_total_daily = unf_eth_daily + unf_dcr_daily + unf_btc_daily + unf_aeg_daily
         total_daily = '${:,.2f}'.format(unf_total_daily)
         unf_total_monthly = unf_eth_monthly + unf_dcr_monthly + unf_btc_monthly + unf_aeg_monthly
         total_monthly = '${:,.2f}'.format(unf_total_monthly)
-        return render(request, 'temp/live_mphpool.html', {'eth_balance' : mph_eth_dashboard()[0], 'eth_hashrate': mph_eth_dashboard()[1], 'eth_last24hr' : mph_eth_dashboard()[2], 
-	'eth_nethash' : eth_profit()[5], 'eth_price' : eth_profit()[2], 'eth_profit' : eth_profit()[0], 'eth_daily_profit' : eth_profit()[1], 'dcr_balance': supr_dcr_dashboard()[0],
-	'dcr_hashrate': supr_dcr_dashboard()[1], 'dcr_nethash' : dcr_profit()[5], 'dcr_price' : dcr_profit()[2], 'dcr_profit': dcr_profit()[0], 'dcr_daily_profit': dcr_profit()[1], 
-	'btc_balance': slush_btc_dashboard()[0], 'btc_hashrate': slush_btc_dashboard()[1], 'btc_nethash': btc_profit()[5], 'btc_price': btc_profit()[2], 'btc_profit': btc_profit()[0],
-	'btc_daily_profit': btc_profit()[1], 'aeg_price': aeg_profit(unf_aeg_price)[2], 'aeg_profit': aeg_profit(unf_aeg_price)[0], 'aeg_daily_profit': aeg_profit(unf_aeg_price)[1],
-	'total_daily': total_daily, 'total_monthly': total_monthly})
+        return render(request, 'temp/live_mphpool.html', {'eth_balance' : mph_eth_dashboard_r[0], 'eth_hashrate': mph_eth_dashboard_r[1], 'eth_last24hr' : mph_eth_dashboard_r[2], 
+	'eth_nethash' : eth_profit_r[5], 'eth_price' : eth_profit_r[2], 'eth_profit' : eth_profit_r[0], 'eth_daily_profit' : eth_profit_r[1], 'dcr_balance': lux_dcr_dashboard_r[0],
+	'dcr_hashrate': lux_dcr_dashboard_r[1], 'dcr_nethash' : dcr_profit_r[5], 'dcr_price' : dcr_profit_r[2], 'dcr_profit': dcr_profit_r[0], 'dcr_daily_profit': dcr_profit_r[1], 
+	'btc_balance': slush_btc_dashboard_r[0], 'btc_hashrate': slush_btc_dashboard_r[1], 'btc_nethash': btc_profit_r[5], 'btc_price': btc_profit_r[2], 'btc_profit': btc_profit_r[0],
+	'btc_daily_profit': btc_profit_r[1], 'aeg_price': aeg_profit_r[2], 'aeg_profit': aeg_profit_r[0], 'aeg_daily_profit': aeg_profit_r[1], 'total_daily': total_daily, 
+	'total_monthly': total_monthly, 'eth_coin' : mph_eth_dashboard_r[3]})
 
 
 def update_difficulty(request):
@@ -82,6 +146,7 @@ def display_daily_profit(request):
         return render(request, 'temp/display_daily_profit.html', {'sha256' : sha256(), 'x11' : x11(), 'myrGroestl' : myrGroestl(), 'qubit' : qubit(), 'scrypt' : scrypt(), 'blake14r' : blake14r(),
 	'blake2b' : blake2b(), 'daggerHashimoto' : daggerHashimoto(), 'skein' : skein(), 'cNLv1' : cNLv1(), 'cNv7' : cNv7(), 'equihash' : equihash(), 'timeT10' : timeT10(), 'phi1612' : phi1612(), 
 	'neoScrypt' : neoScrypt(), 'lyra2REv2' : lyra2REv2(), 'lbry' : lbry(), 'pascal' : pascal(), 'x16R' : x16R(), 'x11Gost' : x11Gost(), 'phi2' : phi2(), 'quark' : quark()})
+
 
 def history_graph(request,date):
 	graph = get_object_or_404(History, date=date)
@@ -119,22 +184,19 @@ def history_graph(request,date):
 
 
 def update_entry(request):
-	w1_list = filter(settings.W1['FOLDER_REGEX'].search, settings.W1['LIST'])
-	gputemps()
-	shed_temp()
-	outside_temp()
 	gpu_choice = gputemps()
 	entry = Entry(shedcur=shed_temp(), outscur=outside_temp(),gpuavg=gpu_choice.gpuavg,gpuhigh=gpu_choice.gpuhigh)
 	entry.save()
 
 
 def live_forecast(request):
-	 return render(request, 'temp/live_forecast.html', {'forecast' : forecast()[0], 'forecast_alt' : forecast()[1],'forecast_icon' : forecast()[2], 'forecast_am' : forecast()[3], 'forecast_pm' : forecast()[4], 'forecast_date' : forecast()[5]})
+	update_forecast = forecast()
+	return render(request, 'temp/live_forecast.html', {'forecast' : update_forecast[0], 'forecast_alt' : update_forecast[1],'forecast_icon' : update_forecast[2], 'forecast_am' : update_forecast[3], 'forecast_pm' : update_forecast[4], 'forecast_date' : update_forecast[5]})
 
 
 def live_power(request):
-	pdustats()
-	return render(request, 'temp/live_power.html', {'pdupower': pdustats()})
+	update_pdupower = pdustats()
+	return render(request, 'temp/live_power.html', {'pdupower': update_pdupower})
 
 
 def live_camera(request):
