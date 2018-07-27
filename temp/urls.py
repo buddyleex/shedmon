@@ -20,4 +20,5 @@ urlpatterns = [
 	url(r'^live_wallet', views.live_wallet, name='live_wallet'),
 	url(r'^live_asicminers', views.live_asicminers, name='live_asicminers'),
 	url(r'^live_gpuminers', views.live_gpuminers, name='live_gpuminers'),
+	url(r'^price_ticker', views.price_ticker, name='price_ticker'),
 ]

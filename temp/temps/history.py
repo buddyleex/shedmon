@@ -1,9 +1,9 @@
 from datetime import timedelta
 from django.utils import timezone
 from django.db.models import Avg, Max
-from temp.models import *
-import temp.views
-import django
+from temp.models import History, Entry
+#import temp.views
+#import django
 
 def update_avg(self, start, end):
         entries_for_period = Entry.objects.filter(time__gte=start, time__lte=end)

@@ -2,13 +2,17 @@ import requests
 import re
 import json
 from pysnmp.hlapi import *
+import django
+import temp.views
+from temp.models import *
 import sys
 sys.path.append('/home/pi')
-from apicalls import supr_dcr_api, supr_dcr_id, slush_btc_api, slush_btc_id, mph_api, dcraddress
-from minerips import powercost, ethtotalhash, ethpower, dcrtotalhash, dcrpower, btctotalhash, btcpower
+from apicalls import supr_dcr_api, supr_dcr_id, slush_btc_api, slush_btc_id, mph_api, dcraddress, spaceaddress
+from minerips import powercost, ethtotalhash, ethpower, dcrtotalhash, dcrpower, btctotalhash, btcpower, spacepower
 
 requests.packages.urllib3.disable_warnings()
 
+twelve_hours = timezone.now() - timezone.timedelta(hours=12)
 
 def num_before_point(x):
     s = str(x)
@@ -24,30 +28,38 @@ def num_of_e(x):
 def hash(num):
         if bool(re.search('e',str(num))) == True:
                 if int(num_of_e(num)[0]) == int("11"):
-                        num = round(float(num/1000000000),2)
+                        num = round(float(num/1000000000),0)
+			num = int(num)
                         return str(num) + " Gh/s"
                 if int(num_of_e(num)[0]) > int("11") and int(num_of_e(num)[0]) < int("15"):
-                        num = round(float(num/1000000000000),2)
+                        num = round(float(num/1000000000000),0)
+			num = int(num)
                         return str(num) + " Th/s"
                 if int(num_of_e(num)[0]) > int("14") and int(num_of_e(num)[0]) < int("18"):
-                        num = round(float(num/1000000000000000),2)
+                        num = round(float(num/1000000000000000),0)
+			num = int(num)
                         return str(num) + " Ph/s"
                 if int(num_of_e(num)[0]) > int("17") and int(num_of_e(num)[0]) < int("21"):
-                        num = round(float(num/1000000000000000000),2)
+                        num = round(float(num/1000000000000000000),0)
+			num = int(num)
                         return str(num) + " Eh/s" 
 
         elif bool(re.search('e',str(num))) == False:
                 if num_before_point(num) > int("0") and num_before_point(num) < int("4"):
-                        num = round(num,2)
+                        num = round(num,0)
+			num = int(num)
                         return str(num) + " h/s"
                 if num_before_point(num) > int("3") and num_before_point(num) < int("7"):
-                        num = round(float(num/1000),2)
+                        num = round(float(num/1000),0)
+			num = int(num)
                         return str(num) + " Kh/s"
                 if num_before_point(num) > int("6") and num_before_point(num) < int("10"):
-                        num = round(float(num/1000000),2)
+                        num = round(float(num/1000000),0)
+			num = int(num)
                         return str(num) + " Mh/s"
                 if num_before_point(num) > int("9") and num_before_point(num) < int("12"):
-                        num = round(float(num/1000000000),2)
+                        num = round(float(num/1000000000),0)
+			num = int(num)
                         return str(num) + " Gh/s"
         else:
                 return "N/A"
@@ -59,7 +71,7 @@ def mph_eth_dashboard():
         r = requests.get('https://ethereum.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=' + mph_api).json()
         eth_last24hr = round(r['getdashboarddata']['data']['recent_credits_24hours']['amount'],4)
         r = requests.get('https://miningpoolhub.com/index.php?page=api&action=getautoswitchingandprofitsstatistics').json()
-        ethcoin = r['return'][5]['current_mining_coin']
+        ethcoin = r['return'][6]['current_mining_coin']
         r = requests.get('https://' + ethcoin + '.miningpoolhub.com/index.php?page=api&action=getdashboarddata&api_key=' + mph_api).json()
         eth_hashrate = round(float(r['getdashboarddata']['data']['raw']['personal']['hashrate'])/float('1000000'),2)
         eth_hashrate = str(eth_hashrate) + str("Gh/s")
@@ -94,6 +106,15 @@ def lux_dcr_dashboard():
 	return dcr_conf_balance, dcr_hashrate
 
 
+def lux_space_dashboard():
+        r = requests.get('http://mining.luxor.tech/API/SPACE/user/' + spaceaddress).json()
+        space_conf_balance = float(r['balance'])
+	space_conf_balance =  int(round(space_conf_balance / float('1000000000000000000000000'), 0))
+        space_hashrate = r['hashrate_1h']
+        space_hashrate = str(int(round(float(space_hashrate) / float('1000000000'), 0))) + str('Gh/s')
+        return space_conf_balance, space_hashrate
+
+
 def slush_btc_dashboard():
 	r = requests.get('https://slushpool.com/accounts/profile/json/' + slush_btc_api).json()
 	btc_conf_balance = round(float(r['confirmed_reward']),5)
@@ -105,8 +126,13 @@ def slush_btc_dashboard():
 
 
 def eth_profit():
-        r = requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/').json()
-        eth_price = round(float(r[0]['price_usd']),2)
+        #r = requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/').json()
+        #eth_price = round(float(r[0]['price_usd']),2)
+        find_price = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now(), name='Ethereum')
+        for item in find_price:
+                if item.name == 'Ethereum':
+                        unf_ethprice = item.price
+        eth_price = float(unf_ethprice.replace('$', ''))
 	f_eth_price = '${:,.2f}'.format(eth_price)
         r = requests.get('https://whattomine.com/coins/151.json').json()
         block_time = r['block_time']
@@ -129,8 +155,13 @@ def eth_profit():
 
 
 def dcr_profit():
-        r = requests.get('https://api.coinmarketcap.com/v1/ticker/decred/').json() 
-        dcr_price = round(float(r[0]['price_usd']),2) 
+        #r = requests.get('https://api.coinmarketcap.com/v1/ticker/decred/').json() 
+        #dcr_price = round(float(r[0]['price_usd']),2) 
+        find_price = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now(), name='Decred')
+        for item in find_price:
+                if item.name == 'Decred':
+                        unf_dcrprice = item.price
+        dcr_price = float(unf_dcrprice.replace('$', ''))
 	f_dcr_price = '${:,.2f}'.format(dcr_price)
         r = requests.get('https://whattomine.com/coins/152.json').json()
         block_time = r['block_time']
@@ -153,11 +184,23 @@ def dcr_profit():
 
 
 def btc_profit():
-        r = requests.get('https://api.coinmarketcap.com/v1/ticker/bitcoin/').json() 
-        btc_price = round(float(r[0]['price_usd']),2)
-	r = requests.get('https://graviex.net//api/v2/tickers.json').json()
-	unf_aeg_price = float(r['aegbtc']['ticker']['last']) * btc_price
+        #r = requests.get('https://api.coinmarketcap.com/v1/ticker/bitcoin/').json() 
+        #btc_price = round(float(r[0]['price_usd']),2)
+	#r = requests.get('https://graviex.net//api/v2/tickers.json').json()
+	#unf_aeg_price = float(r['aegbtc']['ticker']['last']) * btc_price
+        find_price = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now(), name='Bitcoin')
+        for item in find_price:
+                if item.name == 'Bitcoin':
+                        unf_btcprice = item.price
+	unf_btc_price = unf_btcprice.replace('$','')
+	btc_price = float(unf_btc_price.replace(',',''))
         f_btc_price = '${:,.2f}'.format(btc_price)
+	#f_btc_price = unf_btcprice
+        find_price = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now(), name='Aegeus')
+        for item in find_price:    
+                if item.name == 'Aegeus':
+                        unf_aegprice = item.price
+        unf_aeg_price = float(unf_aegprice.replace('$', ''))
         r = requests.get('https://whattomine.com/coins/1.json').json()
         block_time = r['block_time']
         block_reward = r['block_reward']
@@ -193,3 +236,38 @@ def aeg_profit(unf_aeg_price):
 	unf_net_monthly = (monthlycycles * payoutMN * unf_aeg_price) - float('5')
 	net_monthly = '${:,.2f}'.format(unf_net_monthly)
 	return net_monthly, net_daily, f_aeg_price, unf_net_monthly, unf_net_daily 
+
+
+def space_profit():
+        #r = requests.get('https://api.coinmarketcap.com/v1/ticker/hyperspace/').json() 
+        #space_price = round(float(r[0]['price_usd']),2) 
+        #find_price = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now(), name='Hyperspace')
+        #for item in find_price:
+        #        if item.name == 'Hyperspace':
+        #                unf_spaceprice = item.price
+        #space_price = float(unf_spaceprice.replace('$', ''))
+        #f_space_price = '${:,.2f}'.format(space_price)
+        #r = requests.get('https://whattomine.com/coins/152.json').json()
+        #block_time = r['block_time']
+        #block_reward = r['block_reward']
+        #nethash = r['nethash']
+        #f_nethash = float(nethash)
+        daily_power = spacepower * float(24)
+        total_power = spacepower * float(24) * float(30)
+        total_cost = total_power * powercost
+        daily_cost = daily_power * powercost
+        #hash_vs_nethash = spacetotalhash / nethash
+        #block_and_time = float(block_reward) * float(86400) / float(block_time)
+        #gross_monthly = hash_vs_nethash * block_and_time * space_price * float(30)
+        #gross_daily = hash_vs_nethash * block_and_time * space_price
+        #unf_net_monthly = round(gross_monthly - total_cost,2)
+        #net_monthly = '${:,.2f}'.format(unf_net_monthly)
+        #unf_net_daily = round(gross_daily - daily_cost,2)
+        #net_daily = '${:,.2f}'.format(unf_net_daily)
+	unf_net_monthly = round(float('0') - total_cost,2)
+	net_monthly = '${:,.2f}'.format(unf_net_monthly)
+	unf_net_daily = round(float('0') - daily_cost,2)
+	net_daily = '${:,.2f}'.format(unf_net_daily)
+	hash = 'N/A'
+	f_space_price = 'N/A'
+        return net_monthly, net_daily, f_space_price, unf_net_monthly, unf_net_daily, hash

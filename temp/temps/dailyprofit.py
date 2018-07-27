@@ -4,9 +4,7 @@ import django
 from django.utils import timezone
 from datetime import timedelta
 
-## Make pow list from Difficulty Model
 twelve_hours = timezone.now() - timezone.timedelta(hours=12)
-#diffModel = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now())
 	
 ## SHA-256
 def sha256():
@@ -78,14 +76,14 @@ def blake2b():
 	return blake2bList
 		
 
-## Dagger Hashimoto
-def daggerHashimoto():
-	daggerHashimotoList = []
+## Ethash / Dagger Hashimoto
+def Ethash():
+	EthashList = []
 	diffModel = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now())
         for pow in diffModel:
-                if pow.algo == "Dagger Hashimoto":
-                        daggerHashimotoList.append(pow)
-	return daggerHashimotoList
+                if pow.algo == "Ethash":
+                        EthashList.append(pow)
+	return EthashList
 		
 		
 ## Skein

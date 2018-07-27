@@ -1,8 +1,9 @@
 <html>
 <head>
 <title>
-Mining Shed Last Difficulty
+Most Profitable Coin per Algo
 </title>
+<meta http-equiv="refresh" content="4500">
 <link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.min.css">
 <link rel="stylesheet" href="https://bootswatch.com/4/cyborg/bootstrap.css">
 </head>
@@ -10,286 +11,25 @@ Mining Shed Last Difficulty
 <p>
 <style> table {	border-collapse: collapse;} table, th, td {border: 1px solid #606060; padding-left: 10px; padding-right: 10px </style>
 
-<div>
- <h1><FONT COLOR="#FFFFFF">Mining Shed Last Difficulty</FONT></h1>
-</div>
-<a href="..">Back</a>
-
-
 <table>
  <tr>
-  <th bgcolor="#A0A0A0">Abv</th>
-  <th bgcolor="#A0A0A0">Name</th>
-  <th bgcolor="#A0A0A0">Price</th>
-  <th bgcolor="#A0A0A0">Nethash</th>
-  <th bgcolor="#A0A0A0">Block Reward</th>
-  <th bgcolor="#A0A0A0">Block Time</th>
-  <th bgcolor="#A0A0A0">Algo</th>
+  <th colspan=3 align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Daily Profitability</FONT></th>
  </tr>
- 
- {% for display in sha256 %}
  <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
+  <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Coin</FONT></td>
+  <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Algo</FONT></td>
+  <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">Daily</FONT></td>
+<!--  <td align="center" style="white-space: nowrap;text-align:center"><FONT COLOR="#A0A0A0">ROI</FONT></td> --!>
+ </tr>
+
+{% for coin in most_profit %}
+ <tr>
+ <td style="max-width:100px;"><FONT COLOR="#A0A0A0">{{ coin.0 }}</FONT></td>
+ <td> <FONT COLOR="#A0A0A0">{{ coin.1 }}</FONT></td>
+ <td> <FONT COLOR="#A0A0A0">{{ coin.2 }}</FONT></td>
+<!-- <td> <FONT COLOR="#A0A0A0">{{ coin.3 }}</FONT></td> --!>
  </tr>
 {% endfor %}
 
- {% for display in daggerHashimoto %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in blake14r %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in blake2b %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in scrypt %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in x11 %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in x16R %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in phi2 %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in phi1612 %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in lbry %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in pascal %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in neoScrypt %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in lyra2REv2 %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in cNLv1 %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in cNv7 %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in equihash %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in timeT10 %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in myrGroestl %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in qubit %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in skein %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in x11Gost %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
-
- {% for display in quark %}
- <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.price }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockr }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.blockt }}</FONT></td>
-  <td> <FONT COLOR="#A0A0A0">{{ display.algo }}</FONT></td>
- </tr>
-{% endfor %}
 </table>
-
 </html>

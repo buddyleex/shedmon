@@ -8,8 +8,8 @@ import re
 import requests
 import json
 from temp.models import *
-import temp.views
-import django
+#import temp.views
+#import django
 from django.http import request
 import sys
 sys.path.append('/home/pi')

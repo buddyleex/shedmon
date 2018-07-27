@@ -11,6 +11,8 @@ def bitcoin():
 		return btc_polo
 	except requests.exceptions.HTTPError:
 		return 0
+       	except TypeError:
+              	price = float('0.0')
 
 def update_diff(abv, name, wtm, cmc, polo, grav, cbri, algo):
 	if cmc != int('0'):

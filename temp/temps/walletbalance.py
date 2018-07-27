@@ -1,4 +1,7 @@
 import requests
+import django
+import temp.views
+from temp.models import *
 import sys
 sys.path.append('/home/pi')
 from apicalls import ethaddress, dcraddress, dcraddressold, btcaddress, aegaddress, ubiqaddress, siaaddress, rvnaddress, xrpaddress, etherscan_api
@@ -6,6 +9,8 @@ from apicalls import ethaddress, dcraddress, dcraddressold, btcaddress, aegaddre
 requests.packages.urllib3.disable_warnings()
 
 def wallet_balance():
+	twelve_hours = timezone.now() - timezone.timedelta(hours=12)
+
 	r = requests.get('https://api.etherscan.io/api?module=account&action=balance&address=' + ethaddress + '&tag=latest&apikey=' + etherscan_api).json()
 	ethbalance = round(float(r['result']) / float('1000000000000000000'),4)
 	r = requests.get('https://api.etherscan.io/api?module=stats&action=ethprice&apikey=' + etherscan_api).json()
@@ -34,9 +39,15 @@ def wallet_balance():
 
 	r = requests.get('https://chainz.cryptoid.info/aeg/api.dws?q=getbalance&a=' + aegaddress).json()
 	aegbalance = round(float(r), 0)
-	r = requests.get('https://graviex.net//api/v2/tickers.json').json()
-	aegprice = float(r['aegbtc']['ticker']['last']) * btcprice
-	unf_aegbalanceprice = round(aegbalance * aegprice, 2)
+	#r = requests.get('https://graviex.net//api/v2/tickers.json').json()
+	#aegprice = float(r['aegbtc']['ticker']['last']) * btcprice
+	find_aegprice = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now(), name='Aegeus')
+	for item in find_aegprice:
+		if item.name == 'Aegeus':
+			unf_aegprice = item.price
+	aegprice = float(unf_aegprice.replace('$', ''))
+	unf_aegbalanceprice = round(aegbalance * aegprice, 2) 
+	aegbalance = int(aegbalance)
 	aegbalanceprice = '${:,.2f}'.format(unf_aegbalanceprice)
 
 
@@ -49,25 +60,27 @@ def wallet_balance():
 
 
 	r = requests.get('https://siamining.com/api/v1/addresses/' + siaaddress).json()
-	siabalance = round(float(r['paid']), 2)
+	siabalance = round(float(r['paid']), 0)
 	r = requests.get('https://siamining.com/api/v1/market').json()
 	siaprice = round(float(r['usd_price']), 6)
 	unf_siabalanceprice = round(siabalance * siaprice, 2)
+	siabalance = int(siabalance)
 	siabalanceprice = '${:,.2f}'.format(unf_siabalanceprice)
 
 
 	r = requests.get('http://rvnhodl.com/ext/getbalance/' + rvnaddress).json()
-	rvnbalance = round(float(r), 2)
+	rvnbalance = round(float(r), 0)
 	r = requests.get('https://api.coingecko.com/api/v3/coins/ravencoin').json()
 	rvnprice = round(float(r['market_data']['current_price']['usd']), 5)
 	unf_rvnbalanceprice = round(rvnbalance * rvnprice, 2)
+	rvnbalance = int(rvnbalance)
 	rvnbalanceprice = '${:,.2f}'.format(unf_rvnbalanceprice)
 
 
 	r = requests.get('https://data.ripple.com/v2/accounts/' + xrpaddress).json()
 	xrpbalance = round(float(r['account_data']['initial_balance']), 2)
 	r = requests.get('https://data.ripple.com/v2/network/external_markets').json()
-	xrpprice = float(r['data']['components'][6]['rate'])
+	xrpprice = float(r['data']['components'][3]['rate'])
 	unf_xrpbalanceprice = round(xrpbalance * xrpprice, 2)
 	xrpbalanceprice = '${:,.2f}'.format(unf_xrpbalanceprice)
 

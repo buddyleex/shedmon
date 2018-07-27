@@ -16,6 +16,8 @@ from temps.dailyprofit import *
 from temps.walletbalance import *
 from temps.asicmonitor import *
 from temps.gpumonitor import *
+from temps.dailycalc import *
+from temps.priceticker import *
 
 import time
 from datetime import timedelta
@@ -45,6 +47,11 @@ def history_list(request):
 def update_history(request):
 	history = History(date=date_entry, avgshed=round(avg_choice['shedcur'],2),highshed=round(high_choice['shedcur'],2),avgouts=round(avg_choice['outscur'],2),highouts=round(high_choice['outscur'],2),avggpu=avg_choice['gpuavg'],highgpu=high_choice['gpuhigh'],starttime=previous_day,endtime=current_day)
 	history.save()
+
+
+def price_ticker(request):
+	price_ticker = ticker()
+	return render(request, 'temp/price_ticker.html', {'coins': price_ticker})
 
 
 def live_gpuminers(request):
@@ -84,11 +91,13 @@ def live_gpuminers(request):
 def live_asicminers(request):
 	asicminers = []
 	for asic in ants9ips:
-		asicminers.append(check_antminer_s9i(asic[0], asic[1], 4028))
-	for asic in antd3ips:
-		asicminers.append(check_antminer_d3(asic[0], asic[1], 4028))
+		asicminers.append(check_antminer_s9(asic[0], asic[1], 4028))
+	#for asic in antd3ips:
+	#	asicminers.append(check_antminer_d3(asic[0], asic[1], 4028))
 	for asic in innod9ips:
 		asicminers.append(check_inno_d9(asic[0], asic[1], 4028))
+	for asic in anta3ips:
+		asicminers.append(check_antminer_a3(asic[0], asic[1], 4028))
 	return render(request, 'temp/live_asicminers.html', {'miners' : asicminers})
 
 
@@ -105,9 +114,11 @@ def live_mphpool(request):
 	eth_profit_r = eth_profit()
 	dcr_profit_r = dcr_profit()
 	btc_profit_r = btc_profit()
+	space_profit_r = space_profit()
 	mph_eth_dashboard_r = mph_eth_dashboard()
 	lux_dcr_dashboard_r = lux_dcr_dashboard()
 	slush_btc_dashboard_r = slush_btc_dashboard()
+	lux_space_dashboard_r = lux_space_dashboard()
         unf_eth_daily = eth_profit_r[4]
         unf_eth_monthly = eth_profit_r[3]
         unf_dcr_daily = dcr_profit_r[4]
@@ -118,16 +129,18 @@ def live_mphpool(request):
 	aeg_profit_r = aeg_profit(unf_aeg_price)
 	unf_aeg_daily = aeg_profit_r[4]
 	unf_aeg_monthly = aeg_profit_r[3]
-        unf_total_daily = unf_eth_daily + unf_dcr_daily + unf_btc_daily + unf_aeg_daily
+	unf_space_daily = space_profit_r[4]
+	unf_space_monthly = space_profit_r[3]
+        unf_total_daily = unf_eth_daily + unf_dcr_daily + unf_btc_daily + unf_aeg_daily + unf_space_daily
         total_daily = '${:,.2f}'.format(unf_total_daily)
-        unf_total_monthly = unf_eth_monthly + unf_dcr_monthly + unf_btc_monthly + unf_aeg_monthly
+        unf_total_monthly = unf_eth_monthly + unf_dcr_monthly + unf_btc_monthly + unf_aeg_monthly + unf_space_monthly
         total_monthly = '${:,.2f}'.format(unf_total_monthly)
         return render(request, 'temp/live_mphpool.html', {'eth_balance' : mph_eth_dashboard_r[0], 'eth_hashrate': mph_eth_dashboard_r[1], 'eth_last24hr' : mph_eth_dashboard_r[2], 
 	'eth_nethash' : eth_profit_r[5], 'eth_price' : eth_profit_r[2], 'eth_profit' : eth_profit_r[0], 'eth_daily_profit' : eth_profit_r[1], 'dcr_balance': lux_dcr_dashboard_r[0],
 	'dcr_hashrate': lux_dcr_dashboard_r[1], 'dcr_nethash' : dcr_profit_r[5], 'dcr_price' : dcr_profit_r[2], 'dcr_profit': dcr_profit_r[0], 'dcr_daily_profit': dcr_profit_r[1], 
 	'btc_balance': slush_btc_dashboard_r[0], 'btc_hashrate': slush_btc_dashboard_r[1], 'btc_nethash': btc_profit_r[5], 'btc_price': btc_profit_r[2], 'btc_profit': btc_profit_r[0],
 	'btc_daily_profit': btc_profit_r[1], 'aeg_price': aeg_profit_r[2], 'aeg_profit': aeg_profit_r[0], 'aeg_daily_profit': aeg_profit_r[1], 'total_daily': total_daily, 
-	'total_monthly': total_monthly, 'eth_coin' : mph_eth_dashboard_r[3]})
+	'total_monthly': total_monthly, 'eth_coin' : mph_eth_dashboard_r[3], 'space_dashboard': lux_space_dashboard_r, 'space_profit': space_profit_r})
 
 
 def update_difficulty(request):
@@ -143,10 +156,18 @@ def display_last_difficulty(request):
 
 
 def display_daily_profit(request):
-        return render(request, 'temp/display_daily_profit.html', {'sha256' : sha256(), 'x11' : x11(), 'myrGroestl' : myrGroestl(), 'qubit' : qubit(), 'scrypt' : scrypt(), 'blake14r' : blake14r(),
-	'blake2b' : blake2b(), 'daggerHashimoto' : daggerHashimoto(), 'skein' : skein(), 'cNLv1' : cNLv1(), 'cNv7' : cNv7(), 'equihash' : equihash(), 'timeT10' : timeT10(), 'phi1612' : phi1612(), 
-	'neoScrypt' : neoScrypt(), 'lyra2REv2' : lyra2REv2(), 'lbry' : lbry(), 'pascal' : pascal(), 'x16R' : x16R(), 'x11Gost' : x11Gost(), 'phi2' : phi2(), 'quark' : quark()})
-
+	most_profit = []
+        most_profit.append(calc_most_profit(Ethash(),amd_7_eth))
+        most_profit.append(calc_most_profit(x16R(),nv_7_x16r))
+        most_profit.append(calc_most_profit(equihash(),amd_7_equi))
+        most_profit.append(calc_most_profit(timeT10(),amd_7_tt10))
+        most_profit.append(calc_most_profit(phi1612(),amd_7_phi1612))
+        most_profit.append(calc_most_profit(phi2(),amd_7_phi2))
+        most_profit.append(calc_most_profit(sha256(),ants9_14))
+        most_profit.append(calc_most_profit(blake14r(),innod9))
+        most_profit.append(calc_most_profit(blake2b(),anta3_815))
+        most_profit.append(calc_most_profit(x11(),antd3_17))
+	return render(request, 'temp/display_daily_profit.html', {'most_profit' : most_profit})
 
 def history_graph(request,date):
 	graph = get_object_or_404(History, date=date)
