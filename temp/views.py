@@ -135,8 +135,7 @@ def live_mphpool(request):
         unf_dcr_monthly = dcr_profit_r[3]
         unf_btc_daily = btc_profit_r[4]
         unf_btc_monthly = btc_profit_r[3]
-	unf_aeg_price = btc_profit_r[6]
-	aeg_profit_r = aeg_profit(unf_aeg_price)
+	aeg_profit_r = aeg_profit()
 	unf_aeg_daily = aeg_profit_r[4]
 	unf_aeg_monthly = aeg_profit_r[3]
 	unf_space_daily = space_profit_r[4]

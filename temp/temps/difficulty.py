@@ -2,17 +2,27 @@ import requests
 import re
 import json
 import sys
+import django
+from temp.models import *
 requests.packages.urllib3.disable_warnings()
 
 def bitcoin():
-	try:
-        	r = requests.get('https://poloniex.com/public?command=returnTicker').json()
-        	btc_polo = round(float(r['USDT_BTC']['last']),2)
-		return btc_polo
-	except requests.exceptions.HTTPError:
-		return 0
-       	except TypeError:
-              	price = float('0.0')
+	find_price = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now(), name='Bitcoin')
+        for item in find_price:
+                if item.name == 'Bitcoin':
+                        unf_dcrprice = item.price
+        btc_price = float(unf_btcprice.replace('$', ''))
+	btc_price = float(unf_btcprice.replace(',', ''))
+	return btc_price
+
+	#try:
+        #	r = requests.get('https://poloniex.com/public?command=returnTicker').json()
+        #	btc_polo = round(float(r['USDT_BTC']['last']),2)
+	#	return btc_polo
+	#except requests.exceptions.HTTPError:
+	#	return 0
+       	#except TypeError:
+        #      	price = float('0.0')
 
 def update_diff(abv, name, wtm, cmc, polo, grav, cbri, algo, decimal):
 	if cmc != int('0'):

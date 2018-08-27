@@ -132,12 +132,15 @@ def eth_profit():
         for item in find_price:
                 if item.name == 'Ethereum':
                         unf_ethprice = item.price
+			block_time = item.blockt
+			block_reward = item.blockr
+			nethash = float(item.nethash)
         eth_price = float(unf_ethprice.replace('$', ''))
 	f_eth_price = '${:,.2f}'.format(eth_price)
-        r = requests.get('https://whattomine.com/coins/151.json').json()
-        block_time = r['block_time']
-        block_reward = r['block_reward']
-        nethash = r['nethash']
+        #r = requests.get('https://whattomine.com/coins/151.json').json()
+        #block_time = r['block_time']
+        #block_reward = r['block_reward']
+        #nethash = r['nethash']
 	f_nethash = float(nethash)
 	daily_power = ethpower * float(24)
         total_power = ethpower * float(24) * float(30)
@@ -161,12 +164,15 @@ def dcr_profit():
         for item in find_price:
                 if item.name == 'Decred':
                         unf_dcrprice = item.price
+                        block_time = item.blockt
+                        block_reward = item.blockr
+                        nethash = float(item.nethash)
         dcr_price = float(unf_dcrprice.replace('$', ''))
 	f_dcr_price = '${:,.2f}'.format(dcr_price)
-        r = requests.get('https://whattomine.com/coins/152.json').json()
-        block_time = r['block_time']
-        block_reward = r['block_reward']
-        nethash = r['nethash']
+        #r = requests.get('https://whattomine.com/coins/152.json').json()
+        #block_time = r['block_time']
+        #block_reward = r['block_reward']
+        #nethash = r['nethash']
 	f_nethash = float(nethash)
         daily_power = dcrpower * float(24)
         total_power = dcrpower * float(24) * float(30)
@@ -192,19 +198,22 @@ def btc_profit():
         for item in find_price:
                 if item.name == 'Bitcoin':
                         unf_btcprice = item.price
+                        block_time = item.blockt
+                        block_reward = item.blockr
+                        nethash = float(item.nethash)
 	unf_btc_price = unf_btcprice.replace('$','')
 	btc_price = float(unf_btc_price.replace(',',''))
         f_btc_price = '${:,.2f}'.format(btc_price)
 	#f_btc_price = unf_btcprice
-        find_price = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now(), name='Aegeus')
-        for item in find_price:    
-                if item.name == 'Aegeus':
-                        unf_aegprice = item.price
-        unf_aeg_price = float(unf_aegprice.replace('$', ''))
-        r = requests.get('https://whattomine.com/coins/1.json').json()
-        block_time = r['block_time']
-        block_reward = r['block_reward']
-        nethash = r['nethash']
+        #find_price = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now(), name='Aegeus')
+        #for item in find_price:    
+        #        if item.name == 'Aegeus':
+        #                unf_aegprice = item.price
+        #unf_aeg_price = float(unf_aegprice.replace('$', ''))
+        #r = requests.get('https://whattomine.com/coins/1.json').json()
+        #block_time = r['block_time']
+        #block_reward = r['block_reward']
+        #nethash = r['nethash']
 	f_nethash = float(nethash)
         daily_power = btcpower * float(24)
         total_power = btcpower * float(24) * float(30)
@@ -218,12 +227,17 @@ def btc_profit():
         net_monthly = '${:,.2f}'.format(unf_net_monthly)
         unf_net_daily = round(gross_daily - daily_cost,2)
         net_daily = '${:,.2f}'.format(unf_net_daily)
-        return net_monthly, net_daily, f_btc_price, unf_net_monthly, unf_net_daily, hash(f_nethash), unf_aeg_price
+        return net_monthly, net_daily, f_btc_price, unf_net_monthly, unf_net_daily, hash(f_nethash)
 
 
-def aeg_profit(unf_aeg_price):
-	payoutMN = float('63')
+def aeg_profit():
+        find_price = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now(), name='Aegeus')
+        for item in find_price:    
+                if item.name == 'Aegeus':
+                        unf_aegprice = item.price
+        unf_aeg_price = float(unf_aegprice.replace('$', ''))
 	f_aeg_price = '${:,.5f}'.format(unf_aeg_price)
+	payoutMN = float('56')
 	r = requests.get('http://api-aegeus.mn.zone/masternodes').json()
 	totalMN = float(len(r['nodes']))
 	dailycycles = float('1440') / float(totalMN)
