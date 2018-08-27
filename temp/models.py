@@ -54,6 +54,10 @@ class Coins(models.Model):
 	grav = models.CharField(max_length=100,default="0")
 	cbri = models.CharField(max_length=100,default="0")
 	algo = models.CharField(max_length=100,default="none")
+	scroll = models.CharField(max_length=3,default="no")
+	profit = models.CharField(max_length=3,default="yes")
+	decimal = models.IntegerField(default="2")
+	
 
 	def __str__(self):
 		return self.name

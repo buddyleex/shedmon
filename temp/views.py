@@ -18,11 +18,13 @@ from temps.asicmonitor import *
 from temps.gpumonitor import *
 from temps.dailycalc import *
 from temps.priceticker import *
-
 import time
 from datetime import timedelta
 from datetime import date
 from datetime import datetime
+import sys
+sys.path.append('/home/pi')
+from apicalls import cmcapi
 
 # Create your views here.
 
@@ -50,7 +52,15 @@ def update_history(request):
 
 
 def price_ticker(request):
-	price_ticker = ticker()
+	coinList = []
+	for coin in Coins.objects.filter(scroll='yes'):
+		appendList = []
+		appendList.append(coin.abv)
+		appendList.append(coin.name)
+		appendList.append(coin.decimal)
+		appendList.append(coin.cmc)
+		coinList.append(appendList)	
+	price_ticker = ticker(coinList)
 	return render(request, 'temp/price_ticker.html', {'coins': price_ticker})
 
 
@@ -90,8 +100,8 @@ def live_gpuminers(request):
 
 def live_asicminers(request):
 	asicminers = []
-	for asic in ants9ips:
-		asicminers.append(check_antminer_s9(asic[0], asic[1], 4028))
+	#for asic in ants9ips:
+	#	asicminers.append(check_antminer_s9(asic[0], asic[1], 4028))
 	#for asic in antd3ips:
 	#	asicminers.append(check_antminer_d3(asic[0], asic[1], 4028))
 	for asic in innod9ips:
@@ -144,10 +154,48 @@ def live_mphpool(request):
 
 
 def update_difficulty(request):
-	for coin in Coins.objects.all():
-		updated_diff = update_diff(coin.abv,coin.name,coin.wtm,coin.cmc,coin.polo,coin.grav,coin.cbri,coin.algo)
-		update_diffy = Difficulty(abv=updated_diff[0], name=updated_diff[1], price=updated_diff[2], nethash=updated_diff[3], blockr=updated_diff[4], blockt=updated_diff[5], algo=updated_diff[6])
-		update_diffy.save()
+	currency = 'USD'
+	cmcCoinString = ''
+	cmcCoinList = []
+	updatedPrices = []
+	x=0
+	for coin in Coins.objects.filter(profit='yes'):
+		if coin.cmc > 0:
+			if x == 0:
+				appendList = []
+				appendList.append(coin.abv)
+				appendList.append(coin.decimal)
+				cmcCoinList.append(appendList)
+				x=x+1
+			for i in cmcCoinList:
+				if i[0] == coin.abv:
+					break
+			else:
+				appendList = []
+                                appendList.append(coin.abv)
+                                appendList.append(coin.decimal)
+                                cmcCoinList.append(appendList)
+	for coin in cmcCoinList:
+		cmcCoinString = cmcCoinString + coin[0] + ','
+	rString = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=' + cmcCoinString[:-1]  + '&convert=' + currency + '&CMC_PRO_API_KEY=' + cmcapi
+	r = requests.get(rString).json()
+	for coin in cmcCoinList:
+		appendList = []
+		appendList.append(coin[0])
+		appendList.append(round(float(r['data'][coin[0]]['quote'][currency]['price']),coin[1]))
+		updatedPrices.append(appendList)
+	for coin in Coins.objects.filter(profit='yes'):
+		for name in updatedPrices:
+			if name[0] == coin.abv:
+				coinPrice = name[1]
+				updated_diff = update_diff(coin.abv,coin.name,coin.wtm,coin.cmc,coin.polo,coin.grav,coin.cbri,coin.algo,coin.decimal)
+				update_diffy = Difficulty(abv=updated_diff[0], name=updated_diff[1], price=coinPrice, nethash=updated_diff[3], blockr=updated_diff[4], blockt=updated_diff[5], algo=updated_diff[6])
+				update_diffy.save()
+		if coin.cmc == int('0'):
+				updated_diff = update_diff(coin.abv,coin.name,coin.wtm,coin.cmc,coin.polo,coin.grav,coin.cbri,coin.algo,coin.decimal)
+				update_diffy = Difficulty(abv=updated_diff[0], name=updated_diff[1], price=updated_diff[2], nethash=updated_diff[3], blockr=updated_diff[4], blockt=updated_diff[5], algo=updated_diff[6])
+				update_diffy.save()
+			
 
 
 def display_last_difficulty(request):

@@ -13,6 +13,6 @@ Current Coin Prices
 <p>
 <style> table { border-collapse: collapse;} table, th, td {border: 1px solid #606060; padding-left: 10px; padding-right: 10px </style>
 
-<marquee behavior="scroll" direction="left">{% for coin in coins %} <b><u>{{ coin.0 }}</b></u>: {{ coin.1 }} <font color="{{ coin.3 }}">{{ coin.4 }} <img src="/static/images/{{ coin.3 }}_{{ coin.2 }}_arrow.gif" width="15" height="15"></font>&nbsp;&nbsp;&nbsp;&nbsp;{% endfor %}</div></marquee>
+<marquee behavior="scroll" direction="left">{% for coin in coins %} <b><u>{{ coin.0 }}</b></u>: ${{ coin.1 }} <font color="{{ coin.3 }}">{{ coin.4 }} <img src="/static/images/{{ coin.3 }}_{{ coin.2 }}_arrow.gif" width="15" height="15"></font>&nbsp;&nbsp;&nbsp;&nbsp;{% endfor %}</div></marquee>
 
 </html>

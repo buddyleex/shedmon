@@ -79,8 +79,8 @@ def wallet_balance():
 
 	r = requests.get('https://data.ripple.com/v2/accounts/' + xrpaddress).json()
 	xrpbalance = round(float(r['account_data']['initial_balance']), 2)
-	r = requests.get('https://data.ripple.com/v2/network/external_markets').json()
-	xrpprice = float(r['data']['components'][3]['rate'])
+	r = requests.get('https://cex.io/api/tickers/XRP/USD/').json()                
+	xrpprice = float(r['data'][5]['last'])       
 	unf_xrpbalanceprice = round(xrpbalance * xrpprice, 2)
 	xrpbalanceprice = '${:,.2f}'.format(unf_xrpbalanceprice)
 

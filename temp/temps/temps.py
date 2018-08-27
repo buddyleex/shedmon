@@ -78,7 +78,7 @@ def gputemps():
 			while i < len(temps):
 				y = y + 1
 				z = i + 1
-				tempentry = int(temps[i] + temps[z])
+				tempentry = int(str(temps[i] + temps[z]).replace(';','')) 
 				tempz.append(tempentry)
 				temptot.append(tempz[y])
 				i = i + 6

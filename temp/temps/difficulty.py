@@ -14,23 +14,24 @@ def bitcoin():
        	except TypeError:
               	price = float('0.0')
 
-def update_diff(abv, name, wtm, cmc, polo, grav, cbri, algo):
+def update_diff(abv, name, wtm, cmc, polo, grav, cbri, algo, decimal):
 	if cmc != int('0'):
-		try:
-			r1 = requests.get('https://api.coinmarketcap.com/v2/ticker/' + str(cmc) + '/').json()
-	        	price = round(float(r1['data']['quotes']['USD']['price']),6)
-        		price = '${:,.6f}'.format(price)
-		except requests.exceptions.HTTPError:
-			price = float('0.0')
-		except TypeError:
-			price = float('0.0')
+		#try:
+		#	r1 = requests.get('https://api.coinmarketcap.com/v2/ticker/' + str(cmc) + '/').json()
+	        #	price = round(float(r1['data']['quotes']['USD']['price']),decimal)
+        	#	price = '${:,}'.format(price)
+		#except requests.exceptions.HTTPError:
+		#	price = float('0.0')
+		#except TypeError:
+		#	price = float('0.0')
+		price = float('0')
 
 	elif polo != '0':
 		try:
 			r1 = requests.get('https://poloniex.com/public?command=returnTicker').json()
                 	btc_price = float(r1[polo]['last'])
-			price = round(float(bitcoin()) * float(btc_price),6)
-                	price = '${:,.6f}'.format(price)
+			price = round(float(bitcoin()) * float(btc_price),decimal)
+                	#price = '${:,}'.format(price)
 		except requests.exceptions.HTTPError:
 			price = float('0.0')
 		except TypeError: 
@@ -40,8 +41,8 @@ def update_diff(abv, name, wtm, cmc, polo, grav, cbri, algo):
 		try:
         		r1 = requests.get('https://graviex.net//api/v2/tickers.json').json()         
                 	btc_price = float(r1[grav]['ticker']['last'])
-                	price = round(float(bitcoin()) * float(btc_price),6)
-                	price = '${:,.6f}'.format(price)
+                	price = round(float(bitcoin()) * float(btc_price),decimal)
+                	#price = '${:,}'.format(price)
                 except requests.exceptions.HTTPError:
                         price = float('0.0')
                 except TypeError: 
@@ -52,8 +53,8 @@ def update_diff(abv, name, wtm, cmc, polo, grav, cbri, algo):
                 	r1 = requests.get('https://api.crypto-bridge.org/api/v1/ticker')
                 	jlo = json.loads(r1.text)    
                		btc_price = float(jlo[int(cbri)]['last'])    
-                	price = round(float(bitcoin()) * float(btc_price),6)
-                	price = '${:,.6f}'.format(price)
+                	price = round(float(bitcoin()) * float(btc_price),decimal)
+                	#price = '${:,}'.format(price)
                 except requests.exceptions.HTTPError:
                         price = float('0.0')
                 except TypeError: 

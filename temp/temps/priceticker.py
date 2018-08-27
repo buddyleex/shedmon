@@ -1,82 +1,106 @@
 import django
 import temp.views
 from temp.models import *
+import sys
+sys.path.append('/home/pi')
+from apicalls import cmcapi
 
-
-def ticker():
+def ticker(coins):
 	twelve_hours = timezone.now() - timezone.timedelta(hours=12)
 	twenty_four_hours = timezone.now() - timezone.timedelta(hours=24)
-	coins = ['Bitcoin','Ethereum','Litecoin','Decred','Sia','Ravencoin','Aegeus','Ethereum Classic','Expanse','Ubiq','LBRY Credits','Ripple','Luxcoin','Zcash']
 	diffList_12 = Difficulty.objects.filter(time__gte=twelve_hours, time__lt=timezone.now())
 	diffList_24 = Difficulty.objects.filter(time__gte=twenty_four_hours, time__lt=timezone.now())
         coinList = []
 	coinTicker = []
+	coinPrices24 = []
+	cmcList = []
+	cmcPrices = []
+	noncmcPrices = []
+	cmcCoinString = ''
+	currency = 'USD'
 	for coin in coins:
 		for item in diffList_24:
-			if item.name == coin:
+			if item.abv == coin[0]:
 				item_price_24 = item.price
                                	unf_price = item_price_24.replace('$','')
 				unf_price_24 = unf_price.replace(',','')
                                	coin_price_24 = float(unf_price_24)
-
+				appendList = []
+				appendList.append(item.abv)
+				appendList.append(item.name)
+				appendList.append(coin_price_24)
+				coinPrices24.append(appendList)
 		for item in diffList_12:
-			if item.name == coin:
-				if coin == 'Bitcoin' or coin == 'Ethereum' or coin == 'Decred' or coin == 'Sia':
-					coinModel = Coins.objects.filter(name=coin).get()
-					cmc = coinModel.cmc
-					try:
-                        			r = requests.get('https://api.coinmarketcap.com/v2/ticker/' + str(cmc) + '/').json()
-                        			coin_price_12 = round(float(r['data']['quotes']['USD']['price']),6)
-                			except requests.exceptions.HTTPError:
-                        			coin_price_12 = float('0')
-                			except TypeError:
-                        			coin_price_12 = float('0')
-					if coin == 'Sia' or coin == 'Ravencoin' or coin == 'Aegeus':
-                                     		price = '${:,.5f}'.format(coin_price_12)
-					else:
-						price = '${:,.2f}'.format(coin_price_12)
-					if coin_price_12 >= coin_price_24:
-						direction = 'up'
-						color = 'green'
-					else:
-						direction = 'down'
-						color = 'red'
-					change_1 = float('1') - float(coin_price_24 / coin_price_12)
-					change_2 = round(change_1 * float('100'),2)
-					change = str(change_2) + '%'
-
-                                        coinList = []
-                                        coinList.append(coin)
-                                        coinList.append(price)
-                                        coinList.append(direction)
-                                        coinList.append(color)
-                                        coinList.append(change)
-
-				else:
+			if item.abv == coin[0]:
+				if coin[3] > 0:
+					cmcList.append(coin)
+				if coin[3] == 0:
 					item_price_12 = item.price
 					unf_price = item_price_12.replace('$','')
 					unf_price_12 = unf_price.replace(',','')
 					coin_price_12 = float(unf_price_12)
-					if item.name == 'Sia' or item.name == 'Ravencoin' or item.name == 'Aegeus':
-						price = '${:,.5f}'.format(coin_price_12)
-					else:
-						price = '${:,.2f}'.format(coin_price_12)
-					if coin_price_12 >= coin_price_24:
-						direction = 'up'
-						color = 'green'
-					else:
-						direction = 'down'
-						color = 'red'
-					change_1 = float('1') - float(coin_price_24 / coin_price_12)
-					change_2 = round(change_1 * float('100'),2)
-					change = str(change_2) + '%'
-
-        				coinList = []
-					coinList.append(coin)
-					coinList.append(price)
-					coinList.append(direction)
-					coinList.append(color)
-					coinList.append(change)
-
+					appendList = []
+					appendList.append(item.abv)
+					appendList.append(item.name)
+					appendList.append(item.price)
+					noncmcPrices.append(appendList)
+	
+	for coin in cmcList:
+		cmcCoinString = cmcCoinString + coin[0] + ','
+	try:
+	        rString = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=' + cmcCoinString[:-1]  + '&convert=' + currency + '&CMC_PRO_API_KEY=' + cmcapi
+	        r = requests.get(rString).json()		
+	except requests.exceptions.HTTPError:
+		coinTicker.append('Error')
+		return coinTicker
+	except TypeError:
+		coinTicker.append('Error')
+		return coinTicker
+	for coin in cmcList:
+		appendList = []
+                appendList.append(coin[0])
+		appendList.append(coin[1])
+                appendList.append(round(float(r['data'][coin[0]]['quote'][currency]['price']),coin[2]))
+                cmcPrices.append(appendList)
+	for coin in cmcPrices:
+		for coin24 in coinPrices24:
+			if coin24[0] == coin[0]:
+				if coin[2] >= coin24[2]:
+                                       	direction = 'up'
+                                       	color = 'green'
+                                else:
+                                        direction = 'down'
+                                        color = 'red'
+				change_1 = float('1') - float(coin24[2] / coin[2])
+				change_2 = round(change_1 * float('100'),2)
+				change = str(change_2) + '%'
+				#price = '${:,}'.format(coin[2])
+                               	coinList = []
+                               	coinList.append(coin[1])
+                              	coinList.append(coin[2])
+                               	coinList.append(direction)
+                              	coinList.append(color)
+                               	coinList.append(change)
 				coinTicker.append(coinList)
+	for coin in noncmcPrices:
+		for coin24 in coinPrices24:
+			if coin24[0] == coin[0]:
+				if coin[2] >= coin24[2]:
+                                        direction = 'up'
+                                        color = 'green'
+                                else:
+                                        direction = 'down'
+                                        color = 'red'
+                                change_1 = float('1') - float(coin24[2] / coin[2])
+                                change_2 = round(change_1 * float('100'),2)
+                                change = str(change_2) + '%'
+				#price = '${:,}'.format(coin[2])
+                                coinList = []
+                                coinList.append(coin[1])
+                                coinList.append(coin[2])
+                                coinList.append(direction)
+                                coinList.append(color)
+                                coinList.append(change)
+                                coinTicker.append(coinList)
+				
 	return coinTicker
