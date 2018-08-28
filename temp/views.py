@@ -28,6 +28,10 @@ from apicalls import cmcapi
 
 # Create your views here.
 
+#def test(request):
+#	total = 'test'
+#	return render(request, 'temp/test.html', {'total': total})
+
 def home(request):
 	return render(request, 'temp/home.html', {})
 
@@ -177,12 +181,29 @@ def update_difficulty(request):
 	for coin in cmcCoinList:
 		cmcCoinString = cmcCoinString + coin[0] + ','
 	rString = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=' + cmcCoinString[:-1]  + '&convert=' + currency + '&CMC_PRO_API_KEY=' + cmcapi
-	r = requests.get(rString).json()
-	for coin in cmcCoinList:
-		appendList = []
-		appendList.append(coin[0])
-		appendList.append(round(float(r['data'][coin[0]]['quote'][currency]['price']),coin[1]))
-		updatedPrices.append(appendList)
+	try:
+		r = requests.get(rString).json()
+		for coin in cmcCoinList:
+			appendList = []
+			appendList.append(coin[0])
+			appendList.append(round(float(r['data'][coin[0]]['quote'][currency]['price']),coin[1]))
+			updatedPrices.append(appendList)
+        except requests.exceptions.HTTPError:
+		for coin in cmcCoinList:
+                        appendList = []
+                        appendList.append(coin[0])
+                        appendList.append(float('0.0'))
+                        updatedPrices.append(appendList)
+        except TypeError:
+                        appendList = []
+                        appendList.append(coin[0])
+                        appendList.append(float('0.0'))                                                        
+                        updatedPrices.append(appendList)
+        except ValueError:
+                        appendList = []
+                        appendList.append(coin[0])
+                        appendList.append(float('0.0'))                                                        
+                        updatedPrices.append(appendList)
 	for coin in Coins.objects.filter(profit='yes'):
 		for name in updatedPrices:
 			if name[0] == coin.abv:
@@ -194,7 +215,6 @@ def update_difficulty(request):
 				updated_diff = update_diff(coin.abv,coin.name,coin.wtm,coin.cmc,coin.polo,coin.grav,coin.cbri,coin.algo,coin.decimal)
 				update_diffy = Difficulty(abv=updated_diff[0], name=updated_diff[1], price=updated_diff[2], nethash=updated_diff[3], blockr=updated_diff[4], blockt=updated_diff[5], algo=updated_diff[6])
 				update_diffy.save()
-			
 
 
 def display_last_difficulty(request):

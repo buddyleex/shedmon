@@ -68,7 +68,7 @@ class Difficulty(models.Model):
         time = models.DateTimeField(default=timezone.now)
         abv = models.CharField(max_length=100)
         name = models.CharField(max_length=100)
-	price = models.CharField(max_length=100)
+	price = models.FloatField()
 	nethash = models.FloatField()
 	blockr = models.FloatField()
 	blockt = models.FloatField()

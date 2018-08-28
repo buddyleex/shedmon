@@ -2,3 +2,5 @@ cfehome/secrets.py
 cfehome/secrets.pyc
 temp/secrets.py
 temp/secrets.pyc
+temp/migrations/*
+temp/templates/temp/test.html

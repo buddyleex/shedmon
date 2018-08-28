@@ -21,10 +21,9 @@ def ticker(coins):
 	for coin in coins:
 		for item in diffList_24:
 			if item.abv == coin[0]:
-				item_price_24 = item.price
-                               	unf_price = item_price_24.replace('$','')
-				unf_price_24 = unf_price.replace(',','')
-                               	coin_price_24 = float(unf_price_24)
+				#item_price_24 = item.price
+                               	#coin_price_24 = float(unf_price_24)
+				coin_price_24 = item.price
 				appendList = []
 				appendList.append(item.abv)
 				appendList.append(item.name)
@@ -35,10 +34,9 @@ def ticker(coins):
 				if coin[3] > 0:
 					cmcList.append(coin)
 				if coin[3] == 0:
-					item_price_12 = item.price
-					unf_price = item_price_12.replace('$','')
-					unf_price_12 = unf_price.replace(',','')
-					coin_price_12 = float(unf_price_12)
+					#item_price_12 = item.price
+					#coin_price_12 = float(unf_price_12)
+					coin_price_12 = item.price
 					appendList = []
 					appendList.append(item.abv)
 					appendList.append(item.name)
@@ -56,6 +54,9 @@ def ticker(coins):
 	except TypeError:
 		coinTicker.append('Error')
 		return coinTicker
+	except ValueError:
+		coinTicker.append('Error')
+		return coinTicker
 	for coin in cmcList:
 		appendList = []
                 appendList.append(coin[0])
@@ -71,7 +72,7 @@ def ticker(coins):
                                 else:
                                         direction = 'down'
                                         color = 'red'
-				change_1 = float('1') - float(coin24[2] / coin[2])
+				change_1 = float('1') - coin24[2] / float(coin[2])
 				change_2 = round(change_1 * float('100'),2)
 				change = str(change_2) + '%'
 				#price = '${:,}'.format(coin[2])
@@ -91,7 +92,7 @@ def ticker(coins):
                                 else:
                                         direction = 'down'
                                         color = 'red'
-                                change_1 = float('1') - float(coin24[2] / coin[2])
+                                change_1 = float('1') - coin24[2] / float(coin[2])
                                 change_2 = round(change_1 * float('100'),2)
                                 change = str(change_2) + '%'
 				#price = '${:,}'.format(coin[2])
