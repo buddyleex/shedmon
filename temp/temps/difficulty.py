@@ -2,6 +2,7 @@ import requests
 import re
 import json
 import sys
+import time
 import django
 from temp.models import *
 import temp.views
@@ -75,6 +76,7 @@ def update_diff(abv, name, wtm, cmc, polo, grav, cbri, algo, decimal):
                        	nethash = '0' 
                         blockr = '0' 
                         blockt = '0'
+			time.sleep('20')
        	else:
                	nethash = '0' 
                 blockr = '0' 

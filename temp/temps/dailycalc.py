@@ -6,19 +6,24 @@ from minerspecs import *
 ## Profit calculator for all algo
 
 def calc_profit(coin,miner):
-	daily_power = miner[1] * float(24)
-	daily_cost = daily_power * powercost
-	hash_vs_nethash = miner[0] / coin.nethash
-	block_and_time = float(coin.blockr * float('86400')) / coin.blockt
-	#price = coin.price.replace('$','')
-	#price = float(price.replace(',',''))
-	gross_daily = hash_vs_nethash * block_and_time * coin.price
-	unf_net_daily = round(gross_daily - daily_cost,2)
-	net_daily = '${:,.2f}'.format(unf_net_daily)
-	if unf_net_daily <= float('0'):
+	try:
+		daily_power = miner[1] * float(24)
+		daily_cost = daily_power * powercost
+		hash_vs_nethash = miner[0] / coin.nethash
+		block_and_time = float(coin.blockr * float('86400')) / coin.blockt
+		gross_daily = hash_vs_nethash * block_and_time * coin.price
+		unf_net_daily = round(gross_daily - daily_cost,2)
+		net_daily = '${:,.2f}'.format(unf_net_daily)
+		if unf_net_daily <= float('0'):
+			roi = "Inf"
+		else:
+			roi = int(round(miner[3] / unf_net_daily,0))
+	except ZeroDivisionError:
+                daily_power = miner[1] * float(24)
+                daily_cost = daily_power * powercost
+		unf_net_daily = float(round(daily_cost,2))
+		net_daily = 'Err'
 		roi = "Inf"
-	else:
-		roi = int(round(miner[3] / unf_net_daily,0))
 	return coin.name, unf_net_daily, net_daily, coin.algo, roi
 
 
