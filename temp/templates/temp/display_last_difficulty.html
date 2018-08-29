@@ -27,7 +27,7 @@ Mining Shed Last Difficulty
   
 {% for display in display_last %}
  <tr>
-  <td> <FONT COLOR="#A0A0A0">{{ display.abv }}</FONT></td>
+  <td> <FONT COLOR="#A0A0A0"><a href="{% url 'coin_chart' abv=display.abv %}">{{ display.abv }}</a></FONT></td>
   <td> <FONT COLOR="#A0A0A0">{{ display.name }}</FONT></td>
   <td> <FONT COLOR="#A0A0A0">${{ display.price }}</FONT></td>
   <td> <FONT COLOR="#A0A0A0">{{ display.nethash }}</FONT></td>

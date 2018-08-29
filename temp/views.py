@@ -236,6 +236,61 @@ def display_daily_profit(request):
         most_profit.append(calc_most_profit(x11(),antd3_17))
 	return render(request, 'temp/display_daily_profit.html', {'most_profit' : most_profit})
 
+def coin_chart(request,abv):
+        graph_data = \
+                DataPool(
+                        series=
+                         [{'options': {
+                           'source': Difficulty.objects.filter(abv=abv, time__gte=thirty_days(), time__lt=timezone.now())},
+                          'terms': [              
+                            ('time', lambda x: x.strftime("%m/%d")),
+                            'nethash']}           
+                          ])
+        diff_display = Chart(
+                        datasource = graph_data,        
+                         series_options =              
+                          [{'options':{     
+                            'type': 'line',     
+                            'stacking': False},    
+                           'terms':{
+                             'time': [
+                                'nethash']
+                          }}],
+                         chart_options =           
+                           {'title': {
+                                'text': 'Nethash (30 day)'},
+                            'xAxis': {
+                                'title': {
+                                  'text': 'Date'}}})
+        graph_data2 = \
+                DataPool(
+                        series=
+                         [{'options': {
+                           'source': Difficulty.objects.filter(abv=abv, time__gte=thirty_days(), time__lt=timezone.now())},
+                          'terms': [              
+                            ('time', lambda x: x.strftime("%m/%d")),
+                            'price']}           
+                          ])
+        price_display = Chart(
+                        datasource = graph_data2,        
+                         series_options =              
+                          [{'options':{     
+                            'type': 'line',     
+                            'stacking': False},    
+                           'terms':{
+                             'time': [
+                                'price']
+                          }}],
+                         chart_options =           
+                           {'title': {
+                                'text': 'Price (30 day)'},
+                            'xAxis': {
+                                'title': {
+                                  'text': 'Date'}}})
+
+	return render(request, 'temp/coin_chart.html', {'charts': [diff_display, price_display]})
+	
+
 def history_graph(request,date):
 	graph = get_object_or_404(History, date=date)
 	graph_data = \
@@ -297,3 +352,6 @@ def three_day():
 
 def twelve_hours():
 	return timezone.now() - timezone.timedelta(hours=12)
+
+def thirty_days():
+	return timezone.now() - timezone.timedelta(days=30)
