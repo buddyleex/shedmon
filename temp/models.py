@@ -76,5 +76,4 @@ class Difficulty(models.Model):
 
         def __str__(self):
 		template = '{0.time} {0.name}'
-                return template.format(self)
-
+                return template.format(self)	

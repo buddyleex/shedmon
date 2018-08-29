@@ -22,5 +22,5 @@ urlpatterns = [
 	url(r'^live_gpuminers', views.live_gpuminers, name='live_gpuminers'),
 	url(r'^price_ticker', views.price_ticker, name='price_ticker'),
 	url(r'^chart/(?P<abv>[A-Z]{2,5}$|[A-Z]{2,5}[0-9]$|\$[A-Z]{2,5}$)', views.coin_chart, name='coin_chart'),
-	#url(r'^test', views.test, name='test'),
+	url(r'^test', views.test, name='test'),
 ]

@@ -28,9 +28,14 @@ from apicalls import cmcapi
 
 # Create your views here.
 
-#def test(request):
-#	total = 'test'
-#	return render(request, 'temp/test.html', {'total': total})
+def test(request):
+	testlen = int(len(Coins.objects.filter(profit='yes')))
+	first = testlen / int('3')
+	second = first + first
+	test1 = Coins.objects.filter(profit='yes')[:first]
+	test2 = Coins.objects.filter(profit='yes')[first:second]
+	test3 = Coins.objects.filter(profit='yes')[second:]
+	return render(request, 'temp/test.html', {'test1': test1, 'test2': test2, 'test3': test3})
 
 def home(request):
 	return render(request, 'temp/home.html', {})
@@ -158,6 +163,10 @@ def live_mphpool(request):
 
 def update_difficulty(request):
 	currency = 'USD'
+	timeWait = int('60') ## Time to wait between the 3 groups of API requests to WTM to avoid a 429 error
+	coinLen = int(len(Coins.objects.filter(profit='yes')))
+	firstGrp = coinLen / int('3')
+	secondGrp = firstGrp + firstGrp
 	cmcCoinString = ''
 	cmcCoinList = []
 	updatedPrices = []
@@ -204,17 +213,34 @@ def update_difficulty(request):
                         appendList.append(coin[0])
                         appendList.append(float('0.0'))                                                        
                         updatedPrices.append(appendList)
-	for coin in Coins.objects.filter(profit='yes'):
+	for coin in Coins.objects.filter(profit='yes')[:firstGrp]:
 		for name in updatedPrices:
 			if name[0] == coin.abv:
 				coinPrice = name[1]
 				updated_diff = update_diff(coin.abv,coin.name,coin.wtm,coin.cmc,coin.polo,coin.grav,coin.cbri,coin.algo,coin.decimal)
 				update_diffy = Difficulty(abv=updated_diff[0], name=updated_diff[1], price=coinPrice, nethash=updated_diff[3], blockr=updated_diff[4], blockt=updated_diff[5], algo=updated_diff[6])
 				update_diffy.save()
-		if coin.cmc == int('0'):
-				updated_diff = update_diff(coin.abv,coin.name,coin.wtm,coin.cmc,coin.polo,coin.grav,coin.cbri,coin.algo,coin.decimal)
-				update_diffy = Difficulty(abv=updated_diff[0], name=updated_diff[1], price=updated_diff[2], nethash=updated_diff[3], blockr=updated_diff[4], blockt=updated_diff[5], algo=updated_diff[6])
-				update_diffy.save()
+	time.sleep(timeWait)
+	for coin in Coins.objects.filter(profit='yes')[firstGrp:secondGrp]:
+                for name in updatedPrices:
+                        if name[0] == coin.abv:
+                                coinPrice = name[1]
+                                updated_diff = update_diff(coin.abv,coin.name,coin.wtm,coin.cmc,coin.polo,coin.grav,coin.cbri,coin.algo,coin.decimal)
+                                update_diffy = Difficulty(abv=updated_diff[0], name=updated_diff[1], price=coinPrice, nethash=updated_diff[3], blockr=updated_diff[4], blockt=updated_diff[5], algo=updated_diff[6])
+                                update_diffy.save()
+	time.sleep(timeWait)
+        for coin in Coins.objects.filter(profit='yes')[secondGrp:]:
+                for name in updatedPrices:
+                        if name[0] == coin.abv:
+                                coinPrice = name[1]
+                                updated_diff = update_diff(coin.abv,coin.name,coin.wtm,coin.cmc,coin.polo,coin.grav,coin.cbri,coin.algo,coin.decimal)
+                                update_diffy = Difficulty(abv=updated_diff[0], name=updated_diff[1], price=coinPrice, nethash=updated_diff[3], blockr=updated_diff[4], blockt=updated_diff[5], algo=updated_diff[6])
+                                update_diffy.save()
+	for coin in Coins.objects.filter(profit='yes'):
+               	if coin.cmc == int('0'):
+               		updated_diff = update_diff(coin.abv,coin.name,coin.wtm,coin.cmc,coin.polo,coin.grav,coin.cbri,coin.algo,coin.decimal)
+                       	update_diffy = Difficulty(abv=updated_diff[0], name=updated_diff[1], price=updated_diff[2], nethash=updated_diff[3], blockr=updated_diff[4], blockt=updated_diff[5], algo=updated_diff[6])
+                       	update_diffy.save()
 
 
 def display_last_difficulty(request):
